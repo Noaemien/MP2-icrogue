@@ -32,7 +32,7 @@ public class FolderFileSystem implements FileSystem {
      * @param fallback (FileSystem): secondary file system used on error, not null
      */
     public FolderFileSystem(FileSystem fallback) {
-        this(fallback, new File("."));
+        this(fallback, new File(""));
     }
 
 
