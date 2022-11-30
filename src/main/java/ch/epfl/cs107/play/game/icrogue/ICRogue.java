@@ -8,6 +8,7 @@ import ch.epfl.cs107.play.game.icrogue.area.level0.rooms.Level0Room;
 import ch.epfl.cs107.play.io.DefaultFileSystem;
 import ch.epfl.cs107.play.io.FileSystem;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
+import ch.epfl.cs107.play.window.Keyboard;
 import ch.epfl.cs107.play.window.Window;
 
 public class ICRogue extends AreaGame{
@@ -28,9 +29,11 @@ public class ICRogue extends AreaGame{
         salleCourante = new Level0Room(coords);
         addArea(salleCourante);
         setCurrentArea(salleCourante.getTitle(), true);
-        //player = new ICRoguePlayer();
-        //player.enterArea(area, coords);
 
+
+        player = new ICRoguePlayer(salleCourante, Orientation.UP, new DiscreteCoordinates(2, 2), "zelda/player");
+        player.rotateSpriteToOrientation(player.getOrientation());
+        player.enterArea(salleCourante, new DiscreteCoordinates(2, 2));
     }
 
     @Override
@@ -39,28 +42,19 @@ public class ICRogue extends AreaGame{
 
         if (super.begin(window, fileSystem)) {
             initLevel();
-            areaIndex = 0;
-            initArea(areas[areaIndex]);
+
             return true;
         }
         return false;
     }
 
-    private void initArea(String areaKey) {
-
-        ICRogueRoom area = (ICRogueRoom)setCurrentArea(areaKey, true);
-        DiscreteCoordinates coords = area.getPlayerSpawnPosition();
-        //player = new ICRoguePlayer();
-        //player.enterArea(area, coords);
-        //player.centerCamera();
-
-    }
-
     @Override
     public void update(float deltaTime) {
-        //if(player.isWeak()){
-        //    switchArea();
-        //}
+        Keyboard keyboard= getCurrentArea().getKeyboard();
+        if (keyboard.get(Keyboard.R).isDown()){
+            initLevel();
+        }
+
         super.update(deltaTime);
 
     }
