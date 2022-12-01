@@ -25,10 +25,11 @@ public class Fire extends Projectile{
     @Override
     public void update(float deltaTime) {
         super.update(deltaTime);
-        //TODO CONSUME FIREBALL
-        //if (isTargetReached()){
-        //    consume();
-        //}
+
+        //consumes the fireball when its velocity reaches zero
+        if (getVelocity().equals(Vector.ZERO)){
+            consume();
+        }
     }
 
     @Override

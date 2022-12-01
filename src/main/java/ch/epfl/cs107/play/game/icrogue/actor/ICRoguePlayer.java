@@ -67,7 +67,12 @@ public class ICRoguePlayer extends ICRogueActor{
         super.update(deltaTime);
 
         if (this.projectiles != null) {
-            projectiles.removeIf(Projectile::isConsumed);
+            for (int i = 0; i < projectiles.size(); ++i){
+                if (projectiles.get(i).isConsumed()){
+                    projectiles.get(i).leaveArea();
+                    projectiles.remove(projectiles.get(i));
+                }
+            }
         }
     }
 
