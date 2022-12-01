@@ -3,7 +3,9 @@ package ch.epfl.cs107.play.game.icrogue.actor.projectiles;
 import ch.epfl.cs107.play.game.areagame.Area;
 import ch.epfl.cs107.play.game.areagame.actor.Orientation;
 import ch.epfl.cs107.play.game.areagame.actor.Sprite;
+import ch.epfl.cs107.play.game.areagame.handler.AreaInteractionVisitor;
 import ch.epfl.cs107.play.game.icrogue.actor.ICRogueActor;
+import ch.epfl.cs107.play.game.icrogue.handler.ICRogueInteractionHandler;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
 
 import java.util.Collections;
@@ -72,4 +74,11 @@ abstract public class Projectile extends ICRogueActor implements Consumable {
     public boolean takeCellSpace() {
         return false;
     }
+
+    @Override
+    public void acceptInteraction(AreaInteractionVisitor v, boolean isCellInteraction) {
+        ICRogueInteractionHandler v_casted = (ICRogueInteractionHandler) v;
+        v_casted.interactWith(this , isCellInteraction);
+    }
+
 }

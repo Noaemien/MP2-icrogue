@@ -1,6 +1,8 @@
 package ch.epfl.cs107.play.game.areagame.handler;
 
 import ch.epfl.cs107.play.game.areagame.actor.Interactable;
+import ch.epfl.cs107.play.game.icrogue.actor.items.Cherry;
+import ch.epfl.cs107.play.game.icrogue.actor.items.Stick;
 
 
 public interface AreaInteractionVisitor {

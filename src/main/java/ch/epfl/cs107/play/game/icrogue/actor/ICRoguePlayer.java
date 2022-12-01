@@ -2,11 +2,16 @@ package ch.epfl.cs107.play.game.icrogue.actor;
 
 import ch.epfl.cs107.play.game.actor.TextGraphics;
 import ch.epfl.cs107.play.game.areagame.Area;
+import ch.epfl.cs107.play.game.areagame.actor.Interactable;
+import ch.epfl.cs107.play.game.areagame.actor.Interactor;
 import ch.epfl.cs107.play.game.areagame.actor.Orientation;
 import ch.epfl.cs107.play.game.areagame.actor.Sprite;
 import ch.epfl.cs107.play.game.areagame.handler.AreaInteractionVisitor;
+import ch.epfl.cs107.play.game.icrogue.actor.items.Cherry;
+import ch.epfl.cs107.play.game.icrogue.actor.items.Stick;
 import ch.epfl.cs107.play.game.icrogue.actor.projectiles.Fire;
 import ch.epfl.cs107.play.game.icrogue.actor.projectiles.Projectile;
+import ch.epfl.cs107.play.game.icrogue.handler.ICRogueInteractionHandler;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
 import ch.epfl.cs107.play.math.RegionOfInterest;
 import ch.epfl.cs107.play.math.Vector;
@@ -18,7 +23,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class ICRoguePlayer extends ICRogueActor{
+public class ICRoguePlayer extends ICRogueActor implements Interactor {
     private float hp;
     private TextGraphics message;
     private Sprite sprite;
@@ -27,8 +32,28 @@ public class ICRoguePlayer extends ICRogueActor{
 
     private ArrayList<Projectile> projectiles = new ArrayList<Projectile>();
 
+    private class ICRoguePlayerInteractionHandler implements ICRogueInteractionHandler {
+        @Override
+        public void interactWith(Cherry cherry, boolean isCellInteraction){
+            if(wantsCellInteraction()) {
+                cherry.acceptInteraction(this, true);
+                cherry.collect();
+            }
+        }
+        @Override
+        public void interactWith(Stick stick, boolean isCellInteraction){
+            System.out.println("NOA");
+            if(wantsViewInteraction() && getFieldOfViewCells().equals(stick.getCurrentCells())){
+
+                stick.collect();
+
+            }
+        }
+
+    }
 
 
+    ICRoguePlayerInteractionHandler handler = new ICRoguePlayerInteractionHandler();
 
     public ICRoguePlayer(Area owner, Orientation orientation, DiscreteCoordinates coordinates, String spriteName) {
         super(owner, orientation, coordinates);
@@ -158,6 +183,31 @@ public class ICRoguePlayer extends ICRogueActor{
     @Override
     public List<DiscreteCoordinates> getCurrentCells() {
         return Collections.singletonList(getCurrentMainCellCoordinates());
+    }
+
+    @Override
+    public List<DiscreteCoordinates> getFieldOfViewCells() {
+        return Collections.singletonList(getCurrentMainCellCoordinates().jump(getOrientation().toVector())); //La cellule a laquelle le joueur fait face
+    }
+
+    @Override
+    public boolean wantsCellInteraction() {
+        return true;
+    }
+
+    @Override
+    public boolean wantsViewInteraction() {
+        Keyboard keyboard= getOwnerArea().getKeyboard();
+        return keyboard.get(Keyboard.W).isPressed(); //retourn true si est W est appuiyé sinon retourne faulse
+
+    }
+
+
+
+
+    @Override
+    public void interactWith(Interactable other, boolean isCellInteraction) {
+        other.acceptInteraction(this.handler , isCellInteraction);
     }
 
     @Override
