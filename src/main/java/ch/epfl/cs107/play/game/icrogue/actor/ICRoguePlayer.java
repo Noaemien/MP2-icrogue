@@ -35,21 +35,16 @@ public class ICRoguePlayer extends ICRogueActor implements Interactor {
     private class ICRoguePlayerInteractionHandler implements ICRogueInteractionHandler {
         @Override
         public void interactWith(Cherry cherry, boolean isCellInteraction){
-            if(wantsCellInteraction()) {
-                cherry.acceptInteraction(this, true);
+            if(isCellInteraction) {
                 cherry.collect();
             }
         }
         @Override
         public void interactWith(Stick stick, boolean isCellInteraction){
-            System.out.println("NOA");
             if(wantsViewInteraction() && getFieldOfViewCells().equals(stick.getCurrentCells())){
-
                 stick.collect();
-
             }
         }
-
     }
 
 

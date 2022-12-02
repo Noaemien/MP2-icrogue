@@ -76,7 +76,7 @@ public class ICRogueBehavior extends AreaBehavior {
         }
 
         @Override
-        protected boolean canEnter(Interactable entity) {
+        protected boolean canEnter(Interactable entity) { //TODO fix
             if (entity.takeCellSpace() && entity.getCurrentCells().size() == 0){
 
                 return false;}
