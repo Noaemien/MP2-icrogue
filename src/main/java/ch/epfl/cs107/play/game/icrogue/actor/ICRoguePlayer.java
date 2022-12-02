@@ -150,15 +150,6 @@ public class ICRoguePlayer extends ICRogueActor implements Interactor {
         sprite.draw(canvas);
         message.draw(canvas);
     }
-
-    public boolean isWeak() {
-        return (hp <= 0.f);
-    }
-
-    public void strengthen() {
-        hp = 10;
-    }
-
     ///Ghost implements Interactable
 
     @Override

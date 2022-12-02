@@ -9,5 +9,18 @@ import ch.epfl.cs107.play.game.icrogue.actor.items.Stick;
 import ch.epfl.cs107.play.game.icrogue.actor.projectiles.Fire;
 
 public interface ICRogueInteractionHandler extends AreaInteractionVisitor {
+    default void interactWith(ICRogueBehavior.ICRogueCell cell, boolean isCellInteraction) {
+    }
+
+    default void interactWith(ICRoguePlayer player, boolean isCellInteraction) {
+    }
+
+    default void interactWith(Cherry cherry, boolean isCellInteraction) {
+    }
+
+    default void interactWith(Stick stick, boolean isCellInteraction) {
+    }
+
+    default void interactWith(Fire fire, boolean isCellInteraction){}
 
 }
