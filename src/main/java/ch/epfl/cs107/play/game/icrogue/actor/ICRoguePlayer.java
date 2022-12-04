@@ -30,6 +30,8 @@ public class ICRoguePlayer extends ICRogueActor implements Interactor {
     /// Animation duration in frame number
     private final static int MOVE_DURATION = 8;
 
+    private boolean hasStaff = false;
+
     private ArrayList<Projectile> projectiles = new ArrayList<Projectile>();
 
     private class ICRoguePlayerInteractionHandler implements ICRogueInteractionHandler {
@@ -43,6 +45,7 @@ public class ICRoguePlayer extends ICRogueActor implements Interactor {
         public void interactWith(Stick stick, boolean isCellInteraction){
             if(wantsViewInteraction() && getFieldOfViewCells().equals(stick.getCurrentCells())){
                 stick.collect();
+                hasStaff = true;
             }
         }
     }
@@ -97,7 +100,7 @@ public class ICRoguePlayer extends ICRogueActor implements Interactor {
     }
 
     public void fireBallIfXDown(Orientation orientation, ch.epfl.cs107.play.window.Button b){
-        if(b.isPressed()) {
+        if(b.isPressed() && hasStaff) {
             Projectile newFireBall = new Fire(this.getOwnerArea(), orientation, getCurrentMainCellCoordinates());
             newFireBall.enterArea(this.getOwnerArea(), getCurrentMainCellCoordinates());
             projectiles.add(newFireBall);

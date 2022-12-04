@@ -1,10 +1,13 @@
 package ch.epfl.cs107.play.game.icrogue.actor.projectiles;
 
 import ch.epfl.cs107.play.game.areagame.Area;
+import ch.epfl.cs107.play.game.areagame.AreaBehavior;
+import ch.epfl.cs107.play.game.areagame.actor.Interactable;
 import ch.epfl.cs107.play.game.areagame.actor.Orientation;
 import ch.epfl.cs107.play.game.areagame.actor.Sprite;
 import ch.epfl.cs107.play.game.areagame.handler.AreaInteractionVisitor;
 import ch.epfl.cs107.play.game.icrogue.ICRogueBehavior;
+import ch.epfl.cs107.play.game.icrogue.actor.ICRoguePlayer;
 import ch.epfl.cs107.play.game.icrogue.handler.ICRogueInteractionHandler;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
 import ch.epfl.cs107.play.math.RegionOfInterest;
@@ -29,7 +32,7 @@ public class Fire extends Projectile{
         super.update(deltaTime);
 
         //consumes the fireball when its velocity reaches zero
-        if (getVelocity().equals(Vector.ZERO)){
+        if (getVelocity().equals(Vector.ZERO)){ //TODO CHANGER
             consume();
         }
     }
@@ -43,5 +46,20 @@ public class Fire extends Projectile{
     public void acceptInteraction(AreaInteractionVisitor v, boolean isCellInteraction) {
         ICRogueInteractionHandler v_casted = (ICRogueInteractionHandler) v;
         v_casted.interactWith(this , isCellInteraction);
+    }
+
+    @Override
+    public boolean wantsCellInteraction() {
+        return false;
+    }
+
+    @Override
+    public boolean wantsViewInteraction() {
+        return false;
+    }
+
+    @Override
+    public void interactWith(Interactable other, boolean isCellInteraction) {
+        other.acceptInteraction(this.handler , isCellInteraction);
     }
 }

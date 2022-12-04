@@ -21,12 +21,11 @@ public class Stick extends Item{
 
     @Override
     public void acceptInteraction(AreaInteractionVisitor v, boolean isCellInteraction) {
-        ICRogueInteractionHandler v_casted = (ICRogueInteractionHandler) v;
-        v_casted.interactWith(this , isCellInteraction);
+        ((ICRogueInteractionHandler) v).interactWith(this , isCellInteraction);
     }
 
     @Override
     public boolean takeCellSpace() {
-        return true; //not
+        return true; //not traversable
     }
 }
