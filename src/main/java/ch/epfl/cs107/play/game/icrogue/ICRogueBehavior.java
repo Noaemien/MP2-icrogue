@@ -71,6 +71,10 @@ public class ICRogueBehavior extends AreaBehavior {
             this.type = type;
         }
 
+        public CellType getType(){
+            return type;
+        }
+
         @Override
         protected boolean canLeave(Interactable entity) {
             return true;
@@ -88,7 +92,6 @@ public class ICRogueBehavior extends AreaBehavior {
             if (entity.takeCellSpace() && !isAllEntitiesTraversable()) { return false; }
             else return type.isWalkable;
         }
-
 
         @Override
         public boolean isCellInteractable() {

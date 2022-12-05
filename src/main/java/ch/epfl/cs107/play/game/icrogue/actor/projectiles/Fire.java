@@ -22,6 +22,21 @@ public class Fire extends Projectile{
             new RegionOfInterest(0, 0, 16, 16), new
             Vector(0, 0));
 
+
+    private class ICRogueFireInteractionHandler implements ICRogueInteractionHandler {
+        @Override
+        public void interactWith(ICRogueBehavior.ICRogueCell cell, boolean isCellInteraction) {
+            System.out.println("LOUIS");
+            //if (.equals(getFieldOfViewCells())) System.out.println("NOA");
+            if (cell.getType() == ICRogueBehavior.CellType.WALL || cell.getType() == ICRogueBehavior.CellType.HOLE) {
+                consume();
+            }
+        }
+    }
+
+    ICRogueFireInteractionHandler handler = new ICRogueFireInteractionHandler();
+
+
     public Fire(Area area, Orientation orientation, DiscreteCoordinates position) {
         super(area, orientation, position, 1, 5);
         setSprite(sprite);
