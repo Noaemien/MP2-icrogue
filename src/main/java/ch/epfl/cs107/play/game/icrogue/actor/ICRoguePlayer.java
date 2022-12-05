@@ -8,6 +8,7 @@ import ch.epfl.cs107.play.game.areagame.actor.Orientation;
 import ch.epfl.cs107.play.game.areagame.actor.Sprite;
 import ch.epfl.cs107.play.game.areagame.handler.AreaInteractionVisitor;
 import ch.epfl.cs107.play.game.icrogue.actor.items.Cherry;
+import ch.epfl.cs107.play.game.icrogue.actor.items.Key;
 import ch.epfl.cs107.play.game.icrogue.actor.items.Stick;
 import ch.epfl.cs107.play.game.icrogue.actor.projectiles.Fire;
 import ch.epfl.cs107.play.game.icrogue.actor.projectiles.Projectile;
@@ -34,6 +35,8 @@ public class ICRoguePlayer extends ICRogueActor implements Interactor {
 
     private ArrayList<Projectile> projectiles = new ArrayList<Projectile>();
 
+    private ArrayList<Integer> collectedKeys = new ArrayList<Integer>();
+
     private class ICRoguePlayerInteractionHandler implements ICRogueInteractionHandler {
         @Override
         public void interactWith(Cherry cherry, boolean isCellInteraction){
@@ -46,6 +49,14 @@ public class ICRoguePlayer extends ICRogueActor implements Interactor {
             if(wantsViewInteraction() && getFieldOfViewCells().equals(stick.getCurrentCells())){
                 stick.collect();
                 hasStaff = true;
+            }
+        }
+
+        @Override
+        public void interactWith(Key key, boolean isCellInteraction){
+            if(isCellInteraction) {
+                key.collect();
+                collectedKeys.add(key.ID);
             }
         }
     }

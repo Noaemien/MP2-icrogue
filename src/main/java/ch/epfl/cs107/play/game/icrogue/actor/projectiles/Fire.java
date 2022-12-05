@@ -32,9 +32,11 @@ public class Fire extends Projectile{
         super.update(deltaTime);
 
         //consumes the fireball when its velocity reaches zero
+        /*
         if (getVelocity().equals(Vector.ZERO)){ //TODO CHANGER
             consume();
         }
+        */
     }
 
     @Override
