@@ -51,7 +51,7 @@ public class ICRogue extends AreaGame{
     @Override
     public void update(float deltaTime) {
         Keyboard keyboard= getCurrentArea().getKeyboard();
-        if (keyboard.get(Keyboard.R).isDown()){
+        if (keyboard.get(Keyboard.R).isPressed()){
             initLevel();
         }
 

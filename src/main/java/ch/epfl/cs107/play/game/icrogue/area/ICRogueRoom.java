@@ -101,6 +101,10 @@ public abstract class ICRogueRoom extends Area {
         }
     }
 
+    public void setConnectors(int i, Connector connector){
+        connectors.set(i, connector);
+    }
+
     @Override
     public void update(float deltaTime) {
         super.update(deltaTime);

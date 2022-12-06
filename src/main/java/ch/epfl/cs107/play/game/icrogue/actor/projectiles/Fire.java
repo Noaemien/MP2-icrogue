@@ -34,12 +34,13 @@ public class Fire extends Projectile{
         }
     }
 
-    ICRogueFireInteractionHandler handler = new ICRogueFireInteractionHandler();
+    ICRogueFireInteractionHandler handler;
 
 
     public Fire(Area area, Orientation orientation, DiscreteCoordinates position) {
         super(area, orientation, position, 1, 5);
         setSprite(sprite);
+         handler = new ICRogueFireInteractionHandler();
     }
 
     @Override
@@ -47,11 +48,11 @@ public class Fire extends Projectile{
         super.update(deltaTime);
 
         //consumes the fireball when its velocity reaches zero
-        /*
+
         if (getVelocity().equals(Vector.ZERO)){ //TODO CHANGER
             consume();
         }
-        */
+
     }
 
     @Override
@@ -61,8 +62,7 @@ public class Fire extends Projectile{
 
     @Override
     public void acceptInteraction(AreaInteractionVisitor v, boolean isCellInteraction) {
-        ICRogueInteractionHandler v_casted = (ICRogueInteractionHandler) v;
-        v_casted.interactWith(this , isCellInteraction);
+        ((ICRogueInteractionHandler) v).interactWith(this , isCellInteraction);
     }
 
     @Override
