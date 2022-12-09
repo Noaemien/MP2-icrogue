@@ -17,8 +17,25 @@ import java.util.*;
 
 public class Level0Room  extends ICRogueRoom {
 
+    private boolean HasBeenVisited;
+
     public Level0Room(DiscreteCoordinates tileCoordinates) {
         super(Level0Connectors.E.getAllConnectorsPosition(), Level0Connectors.E.getAllConnectorsOrientation(), "icrogue/Level0Room", tileCoordinates);
+    }
+
+    @Override
+    public boolean isOn() {
+        return HasBeenVisited;
+    }
+
+    @Override
+    public boolean isOff() {
+        return false;
+    }
+
+    @Override
+    public float getIntensity() {
+        return 0;
     }
 
     public enum Level0Connectors implements ConnectorInRoom {
@@ -78,14 +95,12 @@ public class Level0Room  extends ICRogueRoom {
         return "icrogue/level0" + roomCoordinates.x + "" + roomCoordinates.y;
     }
 
-    @Override
-    public DiscreteCoordinates getPlayerSpawnPosition() {
-        return new DiscreteCoordinates(2,2);
-    }
 
     protected void createArea() {
         // Base
         registerActor(new Background(this, behaviorName));
         registerConnectors();
     }
+
+
 }

@@ -10,15 +10,17 @@ import ch.epfl.cs107.play.game.tutosSolution.Tuto2;
 import ch.epfl.cs107.play.game.tutosSolution.Tuto2Behavior;
 import ch.epfl.cs107.play.io.FileSystem;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
+import ch.epfl.cs107.play.signal.logic.Logic;
 import ch.epfl.cs107.play.window.Keyboard;
 import ch.epfl.cs107.play.window.Window;
 
 import java.util.ArrayList;
 import java.util.List;
-
-public abstract class ICRogueRoom extends Area {
+public abstract class ICRogueRoom extends Area implements Logic {
 
     private ICRogueBehavior behavior;
+
+    private boolean hasBeenVisited;
     final protected DiscreteCoordinates roomCoordinates;
     protected String behaviorName;
 
@@ -57,9 +59,6 @@ public abstract class ICRogueRoom extends Area {
     public final float getCameraScaleFactor() {
         return 11.f;//ICRogue.CAMERA_SCALE_FACTOR;
     }
-
-    public abstract DiscreteCoordinates getPlayerSpawnPosition();
-
 
 
     /// Demo2Area implements Playable

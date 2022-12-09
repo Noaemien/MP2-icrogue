@@ -26,6 +26,6 @@ public class Stick extends Item{
 
     @Override
     public boolean takeCellSpace() {
-        return true; //not traversable
+        return (!isCollected());
     }
 }

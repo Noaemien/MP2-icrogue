@@ -29,7 +29,13 @@ import java.util.List;
 public class ICRoguePlayer extends ICRogueActor implements Interactor {
     private float hp;
     private TextGraphics message;
+
+    private Sprite shadow;
+
+    private Sprite mew;
+
     private Sprite sprite;
+
     /// Animation duration in frame number
     private final static int MOVE_DURATION = 4;
 
@@ -61,19 +67,19 @@ public class ICRoguePlayer extends ICRogueActor implements Interactor {
 
         @Override
         public void interactWith(Connector connector, boolean isCellInteraction) {
-            if(!isCellInteraction){
-                if (collectedKeys.contains(connector.keyId)){
+            if (!isCellInteraction) {
+                if (collectedKeys.contains(connector.keyId)) {
                     connector.setState(Connector.State.OPEN);
                 }
-            } else if (!isDisplacementOccurs()){
+            } else if (!isDisplacementOccurs()) {
                 isInConnector = true;
-                connectorDestRoom = connector.destinationRoom;
-                connectorDestCoords = ((ConnectorInRoom)connector).getDestination();
+                connectorDestRoom = connector.getDestinationRoom();
+                connectorDestCoords = connector.getConnectorDestRoom();
             }
         }
 
         @Override
-        public void interactWith (Key key,boolean isCellInteraction){
+        public void interactWith(Key key, boolean isCellInteraction) {
             if (isCellInteraction) {
                 key.collect();
                 collectedKeys.add(key.ID);
@@ -86,11 +92,15 @@ public class ICRoguePlayer extends ICRogueActor implements Interactor {
 
     public ICRoguePlayer(Area owner, Orientation orientation, DiscreteCoordinates coordinates, String spriteName) {
         super(owner, orientation, coordinates);
-        this.hp = 10;
-        message = new TextGraphics(Integer.toString((int)hp), 0.4f, Color.BLUE);
+        message = new TextGraphics("loulou", 0.4f, Color.RED);
         message.setParent(this);
-        message.setAnchor(new Vector(-0.3f, 0.1f));
-        sprite = new Sprite(spriteName, 1.f, 1.f,this);
+        message.setAnchor(new Vector(0.1f, 1.2f));
+        shadow = new Sprite("shadow", 0.58f, 0.58f, this);
+        shadow.setAnchor(new Vector(0.23f, -0.15f));
+        mew = new Sprite("mew.fixed", 0.5f, 0.5f, this,
+                new RegionOfInterest(0, 0, 16, 32), new Vector(-0.2f, -.15f));
+        sprite = new Sprite("zelda/player", .75f, 1.5f, this,
+                new RegionOfInterest(0, 0, 16, 32), new Vector(.15f, -.15f));
 
         resetMotion();
     }
@@ -105,11 +115,11 @@ public class ICRoguePlayer extends ICRogueActor implements Interactor {
     @Override
     public void update(float deltaTime) {
         if (hp > 0) {
-            hp -=deltaTime;
-            message.setText(Integer.toString((int)hp));
+            hp -= deltaTime;
+            message.setText(Integer.toString((int) hp));
         }
         if (hp < 0) hp = 0.f;
-        Keyboard keyboard= getOwnerArea().getKeyboard();
+        Keyboard keyboard = getOwnerArea().getKeyboard();
 
         moveIfPressed(Orientation.LEFT, keyboard.get(Keyboard.LEFT));
         moveIfPressed(Orientation.UP, keyboard.get(Keyboard.UP));
@@ -121,8 +131,8 @@ public class ICRoguePlayer extends ICRogueActor implements Interactor {
         super.update(deltaTime);
 
         if (this.projectiles != null) {
-            for (int i = 0; i < projectiles.size(); ++i){
-                if (projectiles.get(i).isConsumed()){
+            for (int i = 0; i < projectiles.size(); ++i) {
+                if (projectiles.get(i).isConsumed()) {
                     projectiles.get(i).leaveArea();
                     projectiles.remove(projectiles.get(i));
                 }
@@ -130,8 +140,8 @@ public class ICRoguePlayer extends ICRogueActor implements Interactor {
         }
     }
 
-    public void fireBallIfXDown(Orientation orientation, ch.epfl.cs107.play.window.Button b){
-        if(b.isPressed() && hasStaff && !isDisplacementOccurs()) {
+    public void fireBallIfXDown(Orientation orientation, ch.epfl.cs107.play.window.Button b) {
+        if (b.isPressed() && hasStaff && !isDisplacementOccurs()) {
             Projectile newFireBall = new Fire(this.getOwnerArea(), orientation, getCurrentMainCellCoordinates());
             newFireBall.enterArea(this.getOwnerArea(), getCurrentMainCellCoordinates());
             projectiles.add(newFireBall);
@@ -141,26 +151,45 @@ public class ICRoguePlayer extends ICRogueActor implements Interactor {
 
     /**
      * Replace Sprite with Sprite facing orientation
+     *
      * @param orientation (Orientation): given orientation, not null
      */
-    public void rotateSpriteToOrientation(Orientation orientation){
-            if (orientation.equals(Orientation.LEFT)){
-                sprite = new Sprite("zelda/player", .75f, 1.5f, this ,
-                        new RegionOfInterest(0, 96, 16, 32), new Vector(.15f,
-                        -.15f));
-            } else if (orientation.equals(Orientation.RIGHT)){
-                sprite = new Sprite("zelda/player", .75f, 1.5f, this ,
-                        new RegionOfInterest(0, 32, 16, 32), new Vector(.15f,
-                        -.15f));
-            } else if (orientation.equals(Orientation.UP)){
-                sprite = new Sprite("zelda/player", .75f, 1.5f, this ,
-                        new RegionOfInterest(0, 64, 16, 32), new Vector(.15f,
-                        -.15f));
-            } else if (orientation.equals(Orientation.DOWN)) {
-                sprite = new Sprite("zelda/player", .75f, 1.5f, this ,
-                        new RegionOfInterest(0, 0, 16, 32), new Vector(.15f, -.15f));
-            }
+    public void rotateSpriteToOrientation(Orientation orientation) {
+        if (orientation.equals(Orientation.LEFT)) {
+            sprite = new Sprite("zelda/player", .75f, 1.5f, this,
+                    new RegionOfInterest(0, 96, 16, 32), new Vector(.15f,
+                    -.15f));
+        } else if (orientation.equals(Orientation.RIGHT)) {
+            sprite = new Sprite("zelda/player", .75f, 1.5f, this,
+                    new RegionOfInterest(0, 32, 16, 32), new Vector(.15f,
+                    -.15f));
+        } else if (orientation.equals(Orientation.UP)) {
+            sprite = new Sprite("zelda/player", .75f, 1.5f, this,
+                    new RegionOfInterest(0, 64, 16, 32), new Vector(.15f,
+                    -.15f));
+        } else if (orientation.equals(Orientation.DOWN)) {
+            sprite = new Sprite("zelda/player", .75f, 1.5f, this,
+                    new RegionOfInterest(0, 0, 16, 32), new Vector(.15f, -.15f));
+        }
+
     }
+
+    public void rotateMewSpriteToOrientation(Orientation orientation) {
+        if (orientation.equals(Orientation.LEFT)){
+            mew = new Sprite("mew.fixed", .5f, 0.5f, this ,
+                    new RegionOfInterest(16, 0, 16, 21), new Vector(-0.2f, -0.15f));
+        } else if (orientation.equals(Orientation.RIGHT)){
+            mew = new Sprite("mew.fixed", 0.5f, 0.5f, this ,
+                    new RegionOfInterest(48, 0, 16, 21), new Vector(-0.2f, -0.15f));
+        } else if (orientation.equals(Orientation.UP)){
+            mew = new Sprite("mew.fixed", .5f, .5f, this ,
+                    new RegionOfInterest(32, 0, 16, 21), new Vector(-0.2f, -0.15f));
+        } else if (orientation.equals(Orientation.DOWN)) {
+            mew = new Sprite("mew.fixed", .5f, .5f, this,
+                    new RegionOfInterest(0, 0, 16, 21), new Vector(-0.2f, -0.15f));
+        }
+    }
+
 
     /**
      * Orientate and Move this player in the given orientation if the given button is down
@@ -172,6 +201,7 @@ public class ICRoguePlayer extends ICRogueActor implements Interactor {
             if (!isDisplacementOccurs()) {
                 orientate(orientation);
                 rotateSpriteToOrientation(orientation);
+                rotateMewSpriteToOrientation(orientation);
                 move(MOVE_DURATION);
             }
         }
@@ -181,10 +211,12 @@ public class ICRoguePlayer extends ICRogueActor implements Interactor {
 
     @Override
     public void draw(Canvas canvas) {
+        shadow.draw(canvas);
+        mew.draw(canvas);
         sprite.draw(canvas);
         message.draw(canvas);
+
     }
-    ///Ghost implements Interactable
 
     @Override
     public boolean takeCellSpace() {
@@ -220,6 +252,7 @@ public class ICRoguePlayer extends ICRogueActor implements Interactor {
         Keyboard keyboard= getOwnerArea().getKeyboard();
         return keyboard.get(Keyboard.W).isPressed(); //retourn true si est W est appuiyé sinon retourne faulse
     }
+
 
 
     @Override

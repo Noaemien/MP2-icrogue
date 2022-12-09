@@ -45,12 +45,13 @@ abstract public class Level {
 
     protected void setRoomConnectorDestination(DiscreteCoordinates coords, String destination,
                                                ConnectorInRoom connector) {
-        map[coords.x][coords.y].connectors.get(connector.getIndex()).destinationRoom = destination;
+        map[coords.x][coords.y].connectors.get(connector.getIndex()).setDestinationRoom(destination);
+        map[coords.x][coords.y].connectors.get(connector.getIndex()).setDestinationCoords(connector.getDestination());
     }
 
     protected void setRoomConnector(DiscreteCoordinates coords, String destination,
                                     ConnectorInRoom connector) {
-        map[coords.x][coords.y].connectors.get(connector.getIndex()).destinationRoom = destination;
+        setRoomConnectorDestination(coords, destination, connector);
         map[coords.x][coords.y].connectors.get(connector.getIndex()).setState(Connector.State.CLOSED);
     }
     protected void lockRoomConnector(DiscreteCoordinates coords, ConnectorInRoom connector,

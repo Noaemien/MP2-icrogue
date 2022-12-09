@@ -34,7 +34,7 @@ public class ICRogue extends AreaGame{
         setCurrentArea(niveau.getStartTitle(), true);
 
         ICRogueRoom salleCourante = (ICRogueRoom)getCurrentArea();
-        player = new ICRoguePlayer(salleCourante, Orientation.UP, new DiscreteCoordinates(2, 2), "zelda/player");
+        player = new ICRoguePlayer(salleCourante, Orientation.UP, new DiscreteCoordinates(2, 2), "max");
         player.rotateSpriteToOrientation(player.getOrientation());
         player.enterArea(salleCourante, new DiscreteCoordinates(2, 2));
     }
@@ -45,7 +45,6 @@ public class ICRogue extends AreaGame{
 
         setCurrentArea(player.connectorDestRoom, true);
         ICRogueRoom salleCourante = (ICRogueRoom)getCurrentArea();
-        System.out.println(salleCourante.getPlayerSpawnPosition().x + " " + salleCourante.getPlayerSpawnPosition().y );
         player.enterArea(salleCourante, player.connectorDestCoords);
     }
 

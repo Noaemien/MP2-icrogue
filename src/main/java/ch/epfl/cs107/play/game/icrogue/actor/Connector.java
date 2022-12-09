@@ -24,7 +24,8 @@ public class Connector extends AreaEntity implements Interactable {
     
     private DiscreteCoordinates connectorCoords;
 
-    public String destinationRoom;
+    private String destinationRoom;
+
     private DiscreteCoordinates destinationCoords;
     
     private Connector.State state;
@@ -70,8 +71,24 @@ public class Connector extends AreaEntity implements Interactable {
 
     }
 
-    public String getDestination(ICRogueRoom room){
+    public String getDestinationRoom(ICRogueRoom room){
         return room.getTitle();
+    }
+
+    public String getDestinationRoom() {
+        return destinationRoom;
+    }
+
+    public DiscreteCoordinates getConnectorDestRoom() {
+        return destinationCoords;
+    }
+
+    public void setDestinationRoom(String destinationRoom) {
+        this.destinationRoom = destinationRoom;
+    }
+
+    public void setDestinationCoords(DiscreteCoordinates destinationCoords) {
+        this.destinationCoords = destinationCoords;
     }
 
     @Override
