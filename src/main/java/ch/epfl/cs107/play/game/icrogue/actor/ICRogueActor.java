@@ -38,7 +38,7 @@ public class ICRogueActor extends MovableAreaEntity {
      */
     public void enterArea(Area area, DiscreteCoordinates position){
         area.registerActor(this);
-        //area.setViewCandidate(this);
+
         setOwnerArea(area);
         setCurrentPosition(position.toVector());
         resetMotion();

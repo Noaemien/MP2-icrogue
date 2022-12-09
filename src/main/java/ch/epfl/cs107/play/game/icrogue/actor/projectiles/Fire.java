@@ -26,10 +26,10 @@ public class Fire extends Projectile{
     private class ICRogueFireInteractionHandler implements ICRogueInteractionHandler {
         @Override
         public void interactWith(ICRogueBehavior.ICRogueCell cell, boolean isCellInteraction) {
-            System.out.println("LOUIS");
-            //if (.equals(getFieldOfViewCells())) System.out.println("NOA");
-            if (cell.getType() == ICRogueBehavior.CellType.WALL || cell.getType() == ICRogueBehavior.CellType.HOLE) {
-                consume();
+            if (!isCellInteraction) {
+                if (cell.getType().equals(ICRogueBehavior.CellType.WALL) || cell.getType() == ICRogueBehavior.CellType.HOLE) {
+                    consume();
+                }
             }
         }
     }
@@ -40,19 +40,12 @@ public class Fire extends Projectile{
     public Fire(Area area, Orientation orientation, DiscreteCoordinates position) {
         super(area, orientation, position, 1, 5);
         setSprite(sprite);
-         handler = new ICRogueFireInteractionHandler();
+        handler = new ICRogueFireInteractionHandler();
     }
 
     @Override
     public void update(float deltaTime) {
         super.update(deltaTime);
-
-        //consumes the fireball when its velocity reaches zero
-
-        if (getVelocity().equals(Vector.ZERO)){ //TODO CHANGER
-            consume();
-        }
-
     }
 
     @Override
@@ -62,17 +55,8 @@ public class Fire extends Projectile{
 
     @Override
     public void acceptInteraction(AreaInteractionVisitor v, boolean isCellInteraction) {
-        ((ICRogueInteractionHandler) v).interactWith(this , isCellInteraction);
-    }
-
-    @Override
-    public boolean wantsCellInteraction() {
-        return false;
-    }
-
-    @Override
-    public boolean wantsViewInteraction() {
-        return false;
+        if (!isConsumed())
+            ((ICRogueInteractionHandler) v).interactWith(this , isCellInteraction);
     }
 
     @Override

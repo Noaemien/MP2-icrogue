@@ -12,6 +12,8 @@ import ch.epfl.cs107.play.game.icrogue.actor.items.Key;
 import ch.epfl.cs107.play.game.icrogue.actor.items.Stick;
 import ch.epfl.cs107.play.game.icrogue.actor.projectiles.Fire;
 import ch.epfl.cs107.play.game.icrogue.actor.projectiles.Projectile;
+import ch.epfl.cs107.play.game.icrogue.area.ConnectorInRoom;
+import ch.epfl.cs107.play.game.icrogue.area.level0.rooms.Level0Room;
 import ch.epfl.cs107.play.game.icrogue.handler.ICRogueInteractionHandler;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
 import ch.epfl.cs107.play.math.RegionOfInterest;
@@ -29,7 +31,7 @@ public class ICRoguePlayer extends ICRogueActor implements Interactor {
     private TextGraphics message;
     private Sprite sprite;
     /// Animation duration in frame number
-    private final static int MOVE_DURATION = 8;
+    private final static int MOVE_DURATION = 4;
 
     private boolean hasStaff = false;
 
@@ -37,24 +39,42 @@ public class ICRoguePlayer extends ICRogueActor implements Interactor {
 
     private ArrayList<Integer> collectedKeys = new ArrayList<Integer>();
 
+    public boolean isInConnector = false;
+    public String connectorDestRoom;
+    public DiscreteCoordinates connectorDestCoords;
+
     private class ICRoguePlayerInteractionHandler implements ICRogueInteractionHandler {
         @Override
-        public void interactWith(Cherry cherry, boolean isCellInteraction){
-            if(isCellInteraction) {
+        public void interactWith(Cherry cherry, boolean isCellInteraction) {
+            if (isCellInteraction) {
                 cherry.collect();
             }
         }
+
         @Override
-        public void interactWith(Stick stick, boolean isCellInteraction){
-            if(wantsViewInteraction() && getFieldOfViewCells().equals(stick.getCurrentCells())){
+        public void interactWith(Stick stick, boolean isCellInteraction) {
+            if (wantsViewInteraction() && getFieldOfViewCells().equals(stick.getCurrentCells())) {
                 stick.collect();
                 hasStaff = true;
             }
         }
 
         @Override
-        public void interactWith(Key key, boolean isCellInteraction){
-            if(isCellInteraction) {
+        public void interactWith(Connector connector, boolean isCellInteraction) {
+            if(!isCellInteraction){
+                if (collectedKeys.contains(connector.keyId)){
+                    connector.setState(Connector.State.OPEN);
+                }
+            } else if (!isDisplacementOccurs()){
+                isInConnector = true;
+                connectorDestRoom = connector.destinationRoom;
+                connectorDestCoords = ((ConnectorInRoom)connector).getDestination();
+            }
+        }
+
+        @Override
+        public void interactWith (Key key,boolean isCellInteraction){
+            if (isCellInteraction) {
                 key.collect();
                 collectedKeys.add(key.ID);
             }
@@ -111,7 +131,7 @@ public class ICRoguePlayer extends ICRogueActor implements Interactor {
     }
 
     public void fireBallIfXDown(Orientation orientation, ch.epfl.cs107.play.window.Button b){
-        if(b.isPressed() && hasStaff) {
+        if(b.isPressed() && hasStaff && !isDisplacementOccurs()) {
             Projectile newFireBall = new Fire(this.getOwnerArea(), orientation, getCurrentMainCellCoordinates());
             newFireBall.enterArea(this.getOwnerArea(), getCurrentMainCellCoordinates());
             projectiles.add(newFireBall);
@@ -199,10 +219,7 @@ public class ICRoguePlayer extends ICRogueActor implements Interactor {
     public boolean wantsViewInteraction() {
         Keyboard keyboard= getOwnerArea().getKeyboard();
         return keyboard.get(Keyboard.W).isPressed(); //retourn true si est W est appuiyé sinon retourne faulse
-
     }
-
-
 
 
     @Override

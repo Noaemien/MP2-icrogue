@@ -41,7 +41,8 @@ abstract public class Projectile extends ICRogueActor implements Consumable, Int
 
     public Projectile(Area area, Orientation orientation, DiscreteCoordinates position) {
         super(area, orientation, position);
-
+        this.damage = DEFAULT_DAMAGE;
+        this.framesForMove = DEFAULT_MOVE_DURATION;
     }
 
     public void setSprite(Sprite sprite) {

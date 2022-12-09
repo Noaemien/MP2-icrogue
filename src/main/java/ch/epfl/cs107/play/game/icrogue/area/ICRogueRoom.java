@@ -20,9 +20,9 @@ public abstract class ICRogueRoom extends Area {
 
     private ICRogueBehavior behavior;
     final protected DiscreteCoordinates roomCoordinates;
-    final protected String behaviorName;
+    protected String behaviorName;
 
-    private List<Connector> connectors = new ArrayList<Connector>();
+    protected List<Connector> connectors = new ArrayList<Connector>();
 
     protected ICRogueRoom(List<DiscreteCoordinates > connectorsCoordinates ,
                           List<Orientation> orientations ,
@@ -78,9 +78,8 @@ public abstract class ICRogueRoom extends Area {
 
     private void setAllConnectorStates(Connector.State state){
         for(Connector connector : connectors){
-            if (connector.getState() != Connector.State.LOCKED) {
+            if(connector.getState() !=Connector.State.LOCKED && connector.getState() != Connector.State.INVISIBLE) {
                 connector.setState(state);
-                connector.updateSprite();
             }
         }
     }
@@ -88,20 +87,18 @@ public abstract class ICRogueRoom extends Area {
     private void switchUnlockedConnectorStates(){
         Connector.State state;
         for(Connector connector : connectors){
-            if (connector.getState() != Connector.State.LOCKED) {
+            if (connector.getState() != Connector.State.LOCKED && connector.getState() != Connector.State.INVISIBLE) {
                 if (connector.getState() == Connector.State.CLOSED){
                     state = Connector.State.OPEN;
                 } else {
                     state = Connector.State.CLOSED;
                 }
-
                 connector.setState(state);
-                connector.updateSprite();
             }
         }
     }
 
-    public void setConnectors(int i, Connector connector){
+    public void setConnectors(int i, Connector connector){  // TODO TEJ SI CA SERT A RIEN
         connectors.set(i, connector);
     }
 
@@ -116,7 +113,6 @@ public abstract class ICRogueRoom extends Area {
             switchUnlockedConnectorStates();
         } else if (keyboard.get(Keyboard.L).isPressed()){
             connectors.get(0).setState(Connector.State.LOCKED);
-            connectors.get(0).updateSprite();
         }
 
     }

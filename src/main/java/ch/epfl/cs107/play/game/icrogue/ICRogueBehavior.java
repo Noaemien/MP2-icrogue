@@ -108,5 +108,6 @@ public class ICRogueBehavior extends AreaBehavior {
             ((ICRogueInteractionHandler) v).interactWith(this , isCellInteraction);
         }
 
+
     }
 }

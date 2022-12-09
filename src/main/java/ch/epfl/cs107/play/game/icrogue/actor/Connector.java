@@ -6,6 +6,7 @@ import ch.epfl.cs107.play.game.areagame.actor.Orientation;
 import ch.epfl.cs107.play.game.areagame.actor.Sprite;
 import ch.epfl.cs107.play.game.areagame.handler.AreaInteractionVisitor;
 import ch.epfl.cs107.play.game.icrogue.area.ICRogueRoom;
+import ch.epfl.cs107.play.game.icrogue.handler.ICRogueInteractionHandler;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
 import ch.epfl.cs107.play.math.Positionable;
 import ch.epfl.cs107.play.math.Vector;
@@ -16,12 +17,15 @@ import java.util.List;
 public class Connector extends AreaEntity implements Interactable {
 
     final int NO_KEY_ID = -1;
+
+    protected int keyId;
     final ICRogueRoom ROOM;
     private Orientation orientation;
     
     private DiscreteCoordinates connectorCoords;
 
     public String destinationRoom;
+    private DiscreteCoordinates destinationCoords;
     
     private Connector.State state;
 
@@ -66,7 +70,7 @@ public class Connector extends AreaEntity implements Interactable {
 
     }
 
-    private String getDestination(ICRogueRoom room){
+    public String getDestination(ICRogueRoom room){
         return room.getTitle();
     }
 
@@ -78,7 +82,10 @@ public class Connector extends AreaEntity implements Interactable {
                 getOrientation().ordinal()%2)));
     }
 
+
+    public void setKeyId(int keyId){ this.keyId = keyId; }
     public void setState(State state){
+
         this.state = state;
     }
 
@@ -86,7 +93,7 @@ public class Connector extends AreaEntity implements Interactable {
         return this.state;
     }
 
-    public void updateSprite(){
+    private void updateSprite(){
         setSprite(this.state);
     }
 
@@ -100,22 +107,23 @@ public class Connector extends AreaEntity implements Interactable {
     
     @Override
     public boolean takeCellSpace() {
-        return false;
+        if(getState() == state.OPEN) return false;
+        else return true;
     }
 
     @Override
     public boolean isCellInteractable() {
-        return false;
+        return true;
     }
 
     @Override
     public boolean isViewInteractable() {
-        return false;
+        return true;
     }
 
     @Override
     public void acceptInteraction(AreaInteractionVisitor v, boolean isCellInteraction) {
-
+        ((ICRogueInteractionHandler) v).interactWith(this , isCellInteraction);
     }
 
     @Override
@@ -131,6 +139,7 @@ public class Connector extends AreaEntity implements Interactable {
     @Override
     public void draw(Canvas canvas) {
         if (!isOpen()) {
+            updateSprite();
             sprite.draw(canvas);
         }
     }

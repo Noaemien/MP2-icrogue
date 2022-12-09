@@ -7,6 +7,7 @@ import ch.epfl.cs107.play.game.areagame.actor.Orientation;
 import ch.epfl.cs107.play.game.icrogue.actor.Connector;
 import ch.epfl.cs107.play.game.icrogue.actor.items.Cherry;
 import ch.epfl.cs107.play.game.icrogue.actor.items.Item;
+import ch.epfl.cs107.play.game.icrogue.actor.items.Key;
 import ch.epfl.cs107.play.game.icrogue.actor.items.Stick;
 import ch.epfl.cs107.play.game.icrogue.area.ConnectorInRoom;
 import ch.epfl.cs107.play.game.icrogue.area.ICRogueRoom;
@@ -43,7 +44,7 @@ public class Level0Room  extends ICRogueRoom {
 
         @Override
         public int getIndex() {
-            return this.ordinal(); //TODO PAS SUR
+            return this.ordinal();
         }
 
         @Override
@@ -79,17 +80,12 @@ public class Level0Room  extends ICRogueRoom {
 
     @Override
     public DiscreteCoordinates getPlayerSpawnPosition() {
-        return new DiscreteCoordinates(2,10);
+        return new DiscreteCoordinates(2,2);
     }
 
     protected void createArea() {
         // Base
         registerActor(new Background(this, behaviorName));
-        registerActor(new Stick(this, Orientation.DOWN, new DiscreteCoordinates(4, 3)));
-
-        registerActor(new Cherry(this, Orientation.DOWN, new DiscreteCoordinates(6, 3), 1));
-
         registerConnectors();
-        //registerActor(new Foreground(this));
     }
 }
