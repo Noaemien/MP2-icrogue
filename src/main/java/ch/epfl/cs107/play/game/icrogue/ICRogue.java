@@ -48,8 +48,6 @@ public class ICRogue extends AreaGame{
         player.enterArea(salleCourante, player.connectorDestCoords);
     }
 
-
-
     public boolean begin(Window window, FileSystem fileSystem) {
         if (super.begin(window, fileSystem)) {
             initLevel();

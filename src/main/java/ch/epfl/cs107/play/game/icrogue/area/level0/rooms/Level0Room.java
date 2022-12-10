@@ -4,7 +4,10 @@ import ch.epfl.cs107.play.game.areagame.actor.AreaEntity;
 import ch.epfl.cs107.play.game.areagame.actor.Background;
 import ch.epfl.cs107.play.game.areagame.actor.Foreground;
 import ch.epfl.cs107.play.game.areagame.actor.Orientation;
+import ch.epfl.cs107.play.game.icrogue.ICRogue;
 import ch.epfl.cs107.play.game.icrogue.actor.Connector;
+import ch.epfl.cs107.play.game.icrogue.actor.ICRogueActor;
+import ch.epfl.cs107.play.game.icrogue.actor.ICRoguePlayer;
 import ch.epfl.cs107.play.game.icrogue.actor.items.Cherry;
 import ch.epfl.cs107.play.game.icrogue.actor.items.Item;
 import ch.epfl.cs107.play.game.icrogue.actor.items.Key;
@@ -23,15 +26,18 @@ public class Level0Room  extends ICRogueRoom {
         super(Level0Connectors.E.getAllConnectorsPosition(), Level0Connectors.E.getAllConnectorsOrientation(), "icrogue/Level0Room", tileCoordinates);
     }
 
+
+    public void Visiting(){
+        //if()
+        HasBeenVisited = true;
+    }
     @Override
     public boolean isOn() {
         return HasBeenVisited;
     }
 
     @Override
-    public boolean isOff() {
-        return false;
-    }
+    public boolean isOff() {return !HasBeenVisited;}
 
     @Override
     public float getIntensity() {
