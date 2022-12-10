@@ -37,7 +37,21 @@ public class Fire extends Projectile{
             Vector(0, 0)),new Sprite("zelda/fire", 1f, 1f, this ,
             new RegionOfInterest(96, 0, 16, 16), new Vector(0, 0))};
 
-    Sprite[][] spriTab = new Sprite[4][7];
+
+    Sprite[] boomSprite = {new Sprite("zelda/explosion", 1f, 1f, this ,
+            new RegionOfInterest(0,0 , 32, 32), new
+            Vector(0, 0)), new Sprite("zelda/explosion", 1f, 1f, this ,
+            new RegionOfInterest(32, 0, 32,32 ), new
+            Vector(0, 0)), new Sprite("zelda/explosion", 1f, 1f, this ,
+            new RegionOfInterest(64, 0,32, 32), new
+            Vector(0, 0)), new Sprite("zelda/explosion", 1f, 1f, this ,
+            new RegionOfInterest( 96  , 0, 32, 32), new
+            Vector(0, 0)), new Sprite("zelda/explosion", 1f, 1f, this ,
+            new RegionOfInterest(128, 0, 32,32), new
+            Vector(0, 0)), new Sprite("zelda/explosion", 1f, 1f, this ,
+            new RegionOfInterest(160, 0, 32, 32), new
+            Vector(0, 0)),new Sprite("zelda/explosion", 1f, 1f, this ,
+            new RegionOfInterest(196, 0, 32, 32), new Vector(0, 0))};
 
     /*private void initTab(Sprite[][] spriTab){
         for(int i = 0; i < 7; ++i){
@@ -51,6 +65,7 @@ public class Fire extends Projectile{
         }
     }*/
 Animation animation = new Animation(2, spriTabo);
+    Animation animboom = new Animation(1, boomSprite,false);
 
     private class ICRogueFireInteractionHandler implements ICRogueInteractionHandler {
         @Override
@@ -74,13 +89,16 @@ Animation animation = new Animation(2, spriTabo);
 
     @Override
     public void update(float deltaTime) {
-        animation.update(deltaTime);
         super.update(deltaTime);
+        if(!isConsumed()) animation.update(deltaTime);
+        else animboom.update(deltaTime);
+
     }
 
     @Override
     public void draw(Canvas canvas) {
-        animation.draw(canvas);
+        if(!isConsumed()) animation.draw(canvas);
+        else animboom.draw(canvas);
     }
 
     @Override

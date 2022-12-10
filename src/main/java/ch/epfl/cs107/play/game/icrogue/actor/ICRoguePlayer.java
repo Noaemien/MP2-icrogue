@@ -2,10 +2,7 @@ package ch.epfl.cs107.play.game.icrogue.actor;
 
 import ch.epfl.cs107.play.game.actor.TextGraphics;
 import ch.epfl.cs107.play.game.areagame.Area;
-import ch.epfl.cs107.play.game.areagame.actor.Interactable;
-import ch.epfl.cs107.play.game.areagame.actor.Interactor;
-import ch.epfl.cs107.play.game.areagame.actor.Orientation;
-import ch.epfl.cs107.play.game.areagame.actor.Sprite;
+import ch.epfl.cs107.play.game.areagame.actor.*;
 import ch.epfl.cs107.play.game.areagame.handler.AreaInteractionVisitor;
 import ch.epfl.cs107.play.game.icrogue.actor.items.Cherry;
 import ch.epfl.cs107.play.game.icrogue.actor.items.Key;
@@ -28,6 +25,9 @@ import java.util.List;
 
 public class ICRoguePlayer extends ICRogueActor implements Interactor {
     private float hp;
+
+    private Sprite hpView;
+
     private TextGraphics message;
 
     private Sprite shadow;
@@ -95,18 +95,23 @@ public class ICRoguePlayer extends ICRogueActor implements Interactor {
 
     ICRoguePlayerInteractionHandler handler = new ICRoguePlayerInteractionHandler();
 
+    Foreground hpOneDisplay = new Foreground("zelda/heartDisplay", 1, 1, new RegionOfInterest(32,0,16,16));
+    Foreground hpHalfDisplay = new Foreground("zelda/heartDisplay", 1, 1, new RegionOfInterest(16,0,16,16));
+    Foreground hpNullDisplay = new Foreground("zelda/heartDisplay", 1, 1, new RegionOfInterest(0,0,16,16));
+
+
     public ICRoguePlayer(Area owner, Orientation orientation, DiscreteCoordinates coordinates, String spriteName) {
         super(owner, orientation, coordinates);
-        message = new TextGraphics("loulou", 0.4f, Color.RED);
+        message = new TextGraphics("PLAYER_1", 0.4f, Color.MAGENTA);
         message.setParent(this);
-        message.setAnchor(new Vector(0.1f, 1.2f));
+        message.setAnchor(new Vector(-0.1f, 1.2f));
         shadow = new Sprite("shadow", 0.58f, 0.58f, this);
         shadow.setAnchor(new Vector(0.23f, -0.15f));
         mew = new Sprite("mew.fixed", 0.5f, 0.5f, this,
                 new RegionOfInterest(0, 0, 16, 32), new Vector(-0.2f, -.15f));
         sprite = new Sprite("zelda/player", .75f, 1.5f, this,
-                new RegionOfInterest(0, 0, 16, 32), new Vector(.15f, -.15f));
-
+                new RegionOfInterest(0, 0, 16, 32), new Vector(0.15f, -.15f));
+        hp = 3;
         resetMotion();
     }
 
@@ -140,6 +145,11 @@ public class ICRoguePlayer extends ICRogueActor implements Interactor {
                 }
             }
         }
+
+        if (isDead()){
+            leaveArea();
+        }
+
     }
 
     public void fireBallIfXDown(Orientation orientation, ch.epfl.cs107.play.window.Button b) {
@@ -158,19 +168,19 @@ public class ICRoguePlayer extends ICRogueActor implements Interactor {
      */
     public void rotateSpriteToOrientation(Orientation orientation) {
         if (orientation.equals(Orientation.LEFT)) {
-            sprite = new Sprite("zelda/player", .75f, 1.5f, this,
+            sprite = new Sprite("zelda/player" , .75f, 1.5f, this,
                     new RegionOfInterest(0, 96, 16, 32), new Vector(.15f,
                     -.15f));
         } else if (orientation.equals(Orientation.RIGHT)) {
-            sprite = new Sprite("zelda/player", .75f, 1.5f, this,
+            sprite = new Sprite("zelda/player" , .75f, 1.5f, this,
                     new RegionOfInterest(0, 32, 16, 32), new Vector(.15f,
                     -.15f));
         } else if (orientation.equals(Orientation.UP)) {
-            sprite = new Sprite("zelda/player", .75f, 1.5f, this,
+            sprite = new Sprite("zelda/player" , .75f, 1.5f, this,
                     new RegionOfInterest(0, 64, 16, 32), new Vector(.15f,
                     -.15f));
         } else if (orientation.equals(Orientation.DOWN)) {
-            sprite = new Sprite("zelda/player", .75f, 1.5f, this,
+            sprite = new Sprite("zelda/player" , .75f, 1.5f, this,
                     new RegionOfInterest(0, 0, 16, 32), new Vector(.15f, -.15f));
         }
 

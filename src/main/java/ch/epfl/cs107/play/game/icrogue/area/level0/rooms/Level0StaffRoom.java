@@ -19,6 +19,10 @@ public class Level0StaffRoom extends Level0ItemRoom{
     public void addItem(Item item) {
     }
 
+    public void leaving(Stick stick){
+        unregisterActor(stick);
+    }
+
     @Override
     public void createArea(){
         super.createArea();
