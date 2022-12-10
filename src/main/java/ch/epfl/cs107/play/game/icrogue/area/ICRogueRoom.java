@@ -20,7 +20,7 @@ public abstract class ICRogueRoom extends Area implements Logic {
 
     private ICRogueBehavior behavior;
 
-    private boolean hasBeenVisited;
+    protected boolean hasBeenVisited;
     final protected DiscreteCoordinates roomCoordinates;
     protected String behaviorName;
 
@@ -82,7 +82,9 @@ public abstract class ICRogueRoom extends Area implements Logic {
             }
         }
     }
-    
+
+
+
     private void switchUnlockedConnectorStates(){
         Connector.State state;
         for(Connector connector : connectors){
@@ -114,5 +116,16 @@ public abstract class ICRogueRoom extends Area implements Logic {
             connectors.get(0).setState(Connector.State.LOCKED);
         }
 
+        if (isCompleted()){ //TODO: SI ON VEUT FAIRE QUE LES PORTENT SPAWN MEME PAS QUAND TU ENTRE DANS LA SALLE SI C'EST PAS UNE ItEM ROOM
+            setAllConnectorStates(Connector.State.OPEN);
+        }
+    }
+
+    public void visiting(){
+        hasBeenVisited = true;
+    }
+
+    protected boolean isCompleted(){
+        return hasBeenVisited;
     }
 }

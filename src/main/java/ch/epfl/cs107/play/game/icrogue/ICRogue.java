@@ -37,15 +37,16 @@ public class ICRogue extends AreaGame{
         player = new ICRoguePlayer(salleCourante, Orientation.UP, new DiscreteCoordinates(2, 2), "max");
         player.rotateSpriteToOrientation(player.getOrientation());
         player.enterArea(salleCourante, new DiscreteCoordinates(2, 2));
+        salleCourante.visiting();
     }
 
     private void switchRoom(){
         player.leaveArea();
-
-
         setCurrentArea(player.connectorDestRoom, true);
         ICRogueRoom salleCourante = (ICRogueRoom)getCurrentArea();
         player.enterArea(salleCourante, player.connectorDestCoords);
+        salleCourante.visiting();
+
     }
 
     public boolean begin(Window window, FileSystem fileSystem) {
@@ -66,6 +67,12 @@ public class ICRogue extends AreaGame{
         if(player.isInConnector){
             switchRoom();
             player.isInConnector = false;
+        }
+
+        if (niveau.isCompleted()){
+            System.out.println("Win");
+        } else if (player.isDead()) {
+            System.out.println("GameOver");
         }
 
         super.update(deltaTime);

@@ -7,6 +7,7 @@ import ch.epfl.cs107.play.game.areagame.actor.Sprite;
 
 import ch.epfl.cs107.play.game.areagame.handler.AreaInteractionVisitor;
 import ch.epfl.cs107.play.game.icrogue.ICRogueBehavior;
+import ch.epfl.cs107.play.game.icrogue.actor.ICRoguePlayer;
 import ch.epfl.cs107.play.game.icrogue.handler.ICRogueInteractionHandler;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
 import ch.epfl.cs107.play.math.RegionOfInterest;
@@ -16,11 +17,8 @@ import ch.epfl.cs107.play.window.Canvas;
 public class Arrow extends Projectile{
 
 
-    private Orientation orientation;
-
-    Sprite sprite = new Sprite("zelda/arrow", 1f, 1f, this ,
-            new RegionOfInterest(32* orientation.ordinal(), 0, 32, 32),
-            new Vector(0, 0));
+    Sprite sprite;
+    final int ARROW_DAMAGE;
 
 
     private class ICRogueArrowInteractionHandler implements ICRogueInteractionHandler {
@@ -32,6 +30,14 @@ public class Arrow extends Projectile{
                 }
             }
         }
+
+        @Override
+        public void interactWith(ICRoguePlayer player, boolean isCellInteraction) {
+            if (isCellInteraction) {
+                player.inflictDamage(ARROW_DAMAGE);
+                consume();
+            }
+        }
     }
 
     ICRogueArrowInteractionHandler handler;
@@ -39,7 +45,12 @@ public class Arrow extends Projectile{
 
     public Arrow(Area area, Orientation orientation, DiscreteCoordinates position) {
         super(area, orientation, position, 1, 3);
+        ARROW_DAMAGE = 1;
+        sprite = new Sprite("zelda/arrow", 1f, 1f, this ,
+                new RegionOfInterest(32* orientation.ordinal(), 0, 32, 32),
+                new Vector(0, 0));
         setSprite(sprite);
+        handler = new ICRogueArrowInteractionHandler();
     }
 
     @Override
@@ -54,11 +65,12 @@ public class Arrow extends Projectile{
 
     @Override
     public void draw(Canvas canvas) {
-        super.draw(canvas);
+        if (!isConsumed()) sprite.draw(canvas);
     }
 
     public void acceptInteraction(AreaInteractionVisitor v, boolean isCellInteraction) {
-        if (!isConsumed())
-            ((ICRogueInteractionHandler) v).interactWith(this , isCellInteraction);
+        if (!isConsumed()) {
+            ((ICRogueInteractionHandler) v).interactWith(this, isCellInteraction);
+        }
     }
 }

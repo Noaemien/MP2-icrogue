@@ -15,4 +15,13 @@ abstract public class Level0ItemRoom extends Level0Room{
     public void addItem(Item item){
         items.add(item);
     }
+
+    @Override
+    protected boolean isCompleted() {
+        for (Item item: items) {
+            if (!item.isCollected()) return false;
+        }
+        return true;
+    }
+
 }

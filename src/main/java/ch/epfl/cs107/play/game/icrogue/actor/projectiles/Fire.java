@@ -57,7 +57,7 @@ Animation animation = new Animation(2, spriTabo);
         public void interactWith(ICRogueBehavior.ICRogueCell cell, boolean isCellInteraction) {
             if (!isCellInteraction) {
                 if (cell.getType().equals(ICRogueBehavior.CellType.WALL) || cell.getType() == ICRogueBehavior.CellType.HOLE) {
-                    consume();
+                    consume(); //TODO MESSAGE DANS CONSOLE CANNOT BE COMPLETELY REMOVED.
                 }
             }
         }
@@ -69,8 +69,6 @@ Animation animation = new Animation(2, spriTabo);
 
     public Fire(Area area, Orientation orientation, DiscreteCoordinates position) {
         super(area, orientation, position, 1, 4);
-        //initTab(spriTab);
-        //setSprite(sprite);
         handler = new ICRogueFireInteractionHandler();
     }
 

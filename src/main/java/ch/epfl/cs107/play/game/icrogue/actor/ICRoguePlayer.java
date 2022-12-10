@@ -56,6 +56,7 @@ public class ICRoguePlayer extends ICRogueActor implements Interactor {
         public void interactWith(Cherry cherry, boolean isCellInteraction) {
             if (isCellInteraction) {
                 cherry.collect();
+                hp += 1;
             }
         }
 
@@ -87,6 +88,8 @@ public class ICRoguePlayer extends ICRogueActor implements Interactor {
                 collectedKeys.add(key.ID);
             }
         }
+
+
     }
 
 
@@ -116,11 +119,8 @@ public class ICRoguePlayer extends ICRogueActor implements Interactor {
 
     @Override
     public void update(float deltaTime) {
-        if (hp > 0) {
-            hp -= deltaTime;
-            message.setText(Integer.toString((int) hp));
-        }
-        if (hp < 0) hp = 0.f;
+
+        if (hp < 0) hp = 0;
         Keyboard keyboard = getOwnerArea().getKeyboard();
 
         moveIfPressed(Orientation.LEFT, keyboard.get(Keyboard.LEFT));
@@ -213,6 +213,11 @@ public class ICRoguePlayer extends ICRogueActor implements Interactor {
 
     @Override
     public void draw(Canvas canvas) {
+        switch ((int) hp) {
+            case 3 -> hpOneDisplay.draw(canvas);
+            case 2 -> hpHalfDisplay.draw(canvas);
+            case 1 -> hpNullDisplay.draw(canvas);
+        }
         shadow.draw(canvas);
         mew.draw(canvas);
         sprite.draw(canvas);
@@ -264,5 +269,14 @@ public class ICRoguePlayer extends ICRogueActor implements Interactor {
 
     @Override
     public void acceptInteraction(AreaInteractionVisitor v, boolean isCellInteraction) {
+            ((ICRogueInteractionHandler) v).interactWith(this , isCellInteraction);
+    }
+
+    public void inflictDamage(int damage){
+        hp -= damage;
+    }
+
+    public boolean isDead(){
+        return hp <=0;
     }
 }

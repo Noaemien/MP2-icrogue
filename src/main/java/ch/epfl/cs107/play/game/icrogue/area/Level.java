@@ -25,6 +25,7 @@ abstract public class Level {
         this.height = height;
         this.width = width;
         this.map = new ICRogueRoom[height][width];
+        bossRoomCoordinates = new DiscreteCoordinates(0, 0);
         generateFixedMap();
     }
 
@@ -64,6 +65,8 @@ abstract public class Level {
         room.behaviorName = "icrogue/level0" + roomCoords.x + "" + roomCoords.y; //TODO PAS SUR
     }
 
-
+    public boolean isCompleted(){
+        return map[bossRoomCoordinates.x][bossRoomCoordinates.y].isCompleted();
+    }
 
 }

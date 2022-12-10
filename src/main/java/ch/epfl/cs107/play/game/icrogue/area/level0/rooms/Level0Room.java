@@ -20,24 +20,22 @@ import java.util.*;
 
 public class Level0Room  extends ICRogueRoom {
 
-    private boolean HasBeenVisited;
 
     public Level0Room(DiscreteCoordinates tileCoordinates) {
         super(Level0Connectors.E.getAllConnectorsPosition(), Level0Connectors.E.getAllConnectorsOrientation(), "icrogue/Level0Room", tileCoordinates);
     }
 
 
-    public void Visiting(){
-        //if()
-        HasBeenVisited = true;
-    }
+
     @Override
     public boolean isOn() {
-        return HasBeenVisited;
+        return hasBeenVisited;
     }
 
     @Override
-    public boolean isOff() {return !HasBeenVisited;}
+    public boolean isOff() {
+        return !hasBeenVisited;
+    }
 
     @Override
     public float getIntensity() {
@@ -101,12 +99,9 @@ public class Level0Room  extends ICRogueRoom {
         return "icrogue/level0" + roomCoordinates.x + "" + roomCoordinates.y;
     }
 
-
     protected void createArea() {
         // Base
         registerActor(new Background(this, behaviorName));
         registerConnectors();
     }
-
-
 }
