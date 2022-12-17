@@ -54,15 +54,17 @@ abstract public class Projectile extends ICRogueActor implements Consumable, Int
     public void update(float deltaTime) {
         super.update(deltaTime);
         move(this.framesForMove);
-        if(isConsumed()) leaveArea();
+        //if(isConsumed()) leaveArea();
     }
 
     /**
      * Sets isConsumed to true
      */
     public void consume(){
-        isConsumed = true;
-
+        if (!isConsumed) {
+            isConsumed = true;
+            leaveArea();
+        }
     }
 
 

@@ -10,7 +10,7 @@ import ch.epfl.cs107.play.math.DiscreteCoordinates;
 import java.util.Collections;
 import java.util.List;
 
-public class Enemy extends ICRogueActor implements Interactor {
+public class Enemy extends ICRogueActor implements Interactor { //TODO UN ENNEMI N'EST PAS FORCEMENT UN INTERACTOR
 
     private boolean isDead;
 
@@ -34,6 +34,7 @@ public class Enemy extends ICRogueActor implements Interactor {
 
     public void dying() {
         isDead = true;
+        leaveArea();
     }
 
     @Override

@@ -20,7 +20,9 @@ public class Level0 extends Level {
     private DiscreteCoordinates spawnCoordinates;
 
     public Level0() {
-        super(new DiscreteCoordinates(2, 0), 4, 2);
+        super(true, new DiscreteCoordinates(2, 0), new int[] {1,4,2}, 4, 2);
+        //super(new DiscreteCoordinates(2, 0), 4, 2);
+
         this.startRoom = new DiscreteCoordinates(1  , 0);
         this.spawnCoordinates = new DiscreteCoordinates(2, 0);
 

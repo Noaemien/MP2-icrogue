@@ -18,26 +18,25 @@ import ch.epfl.cs107.play.window.Canvas;
 
 import java.util.ArrayList;
 
-public class Turret  extends Enemy {
+public class Turret extends Enemy {
 
     private Sprite sprite;
 
     private final float COOLDOWN = 2.f;
 
-    private float timer;
+    private float timer = 1.2f;
 
     private ArrayList<Projectile> projectiles = new ArrayList<Projectile>();
 
     private Orientation[] shootingDirections;
 
 
-    private class ICRogueTurretInteractionHandler implements ICRogueInteractionHandler {
+    private class ICRogueTurretInteractionHandler implements ICRogueInteractionHandler { //TODO TURRET N'est PAS UN INTERACTOR, ENLEVER LE HANDLER
         @Override
         public void interactWith(Fire fire, boolean isCellInteraction) {
             if (isCellInteraction){
                 dying();
-                fire.consume();
-                leaveArea();
+                //fire.consume();
             }
         }
 
@@ -45,7 +44,6 @@ public class Turret  extends Enemy {
         public void interactWith(ICRoguePlayer player, boolean isCellInteraction) {
             if (isCellInteraction){
                 dying();
-                leaveArea();
             }
         }
     }

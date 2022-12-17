@@ -124,8 +124,7 @@ public class Connector extends AreaEntity implements Interactable {
     
     @Override
     public boolean takeCellSpace() {
-        if(getState() == state.OPEN) return false;
-        else return true;
+        return getState() != State.OPEN;
     }
 
     @Override

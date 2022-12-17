@@ -9,6 +9,7 @@ import ch.epfl.cs107.play.game.areagame.actor.Sprite;
 import ch.epfl.cs107.play.game.areagame.handler.AreaInteractionVisitor;
 import ch.epfl.cs107.play.game.icrogue.ICRogueBehavior;
 import ch.epfl.cs107.play.game.icrogue.actor.ICRoguePlayer;
+import ch.epfl.cs107.play.game.icrogue.actor.enemies.Turret;
 import ch.epfl.cs107.play.game.icrogue.handler.ICRogueInteractionHandler;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
 import ch.epfl.cs107.play.math.RegionOfInterest;
@@ -65,7 +66,7 @@ public class Fire extends Projectile{
         }
     }*/
 Animation animation = new Animation(2, spriTabo);
-    Animation animboom = new Animation(1, boomSprite,false);
+Animation animboom = new Animation(1, boomSprite,false);
 
     private class ICRogueFireInteractionHandler implements ICRogueInteractionHandler {
         @Override
@@ -77,6 +78,12 @@ Animation animation = new Animation(2, spriTabo);
             }
         }
 
+        @Override
+        public void interactWith(Turret turret, boolean isCellInteraction) {
+            if (isCellInteraction) {
+                consume();
+            }
+        }
     }
 
     ICRogueFireInteractionHandler handler;
@@ -99,6 +106,7 @@ Animation animation = new Animation(2, spriTabo);
     public void draw(Canvas canvas) {
         if(!isConsumed()) animation.draw(canvas);
         else animboom.draw(canvas);
+
     }
 
     @Override
