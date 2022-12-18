@@ -35,7 +35,7 @@ public class ICRogue extends AreaGame{
 
         ICRogueRoom salleCourante = (ICRogueRoom)getCurrentArea();
         player = new ICRoguePlayer(salleCourante, Orientation.UP, new DiscreteCoordinates(2, 2), "player");
-        player.rotateSpriteToOrientation(player.getOrientation());
+        //player.rotateSpriteToOrientation(player.getOrientation());
         player.enterArea(salleCourante, new DiscreteCoordinates(2, 2));
         salleCourante.visiting();
     }
