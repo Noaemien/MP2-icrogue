@@ -23,6 +23,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static ch.epfl.cs107.play.game.areagame.actor.Animation.createAnimations; //TODO pas sur de ca a verif
+
 public class ICRoguePlayer extends ICRogueActor implements Interactor {
     private float hp;
 
@@ -36,10 +38,12 @@ public class ICRoguePlayer extends ICRogueActor implements Interactor {
 
     private Sprite sprite;
 
+    private Sprite[][] spriTab = new Sprite[4][4];
+
 
 
     /// Animation duration in frame number
-    private final static int MOVE_DURATION = 3;
+    private final static int MOVE_DURATION = 5;
 
     private boolean hasStaff = false;
 
@@ -102,6 +106,7 @@ public class ICRoguePlayer extends ICRogueActor implements Interactor {
 
     public ICRoguePlayer(Area owner, Orientation orientation, DiscreteCoordinates coordinates, String spriteName) {
         super(owner, orientation, coordinates);
+        iniTab(spriTab);
         message = new TextGraphics("PLAYER_1", 0.4f, Color.MAGENTA);
         message.setParent(this);
         message.setAnchor(new Vector(-0.1f, 1.2f));
@@ -109,8 +114,10 @@ public class ICRoguePlayer extends ICRogueActor implements Interactor {
         shadow.setAnchor(new Vector(0.23f, -0.15f));
         mew = new Sprite("mew.fixed", 0.5f, 0.5f, this,
                 new RegionOfInterest(0, 0, 16, 32), new Vector(-0.2f, -.15f));
+
         sprite = new Sprite("zelda/player", .75f, 1.5f, this,
                 new RegionOfInterest(0, 0, 16, 32), new Vector(0.15f, -.15f));
+
         hp = 3;
         resetMotion();
     }
@@ -122,8 +129,35 @@ public class ICRoguePlayer extends ICRogueActor implements Interactor {
         getOwnerArea().setViewCandidate(this);
     }
 
+    public void iniTab(Sprite[][] spriTab){ 
+        for(int i = 0; i < 4; ++i){
+            spriTab[0][i] = new Sprite("zelda/player", .75f, 1.5f, this,
+                    new RegionOfInterest(16*i,96,16, 32), new Vector(0.15f, -.15f));
+            spriTab[1][i] = new Sprite("zelda/player", .75f, 1.5f, this,
+                    new RegionOfInterest(16*i,64,16, 32), new Vector(0.15f, -.15f));
+            spriTab[2][i] = new Sprite("zelda/player", .75f, 1.5f, this,
+                    new RegionOfInterest(16*i,32,16, 32), new Vector(0.15f, -.15f));
+            spriTab[3][i] = new Sprite("zelda/player", .75f, 1.5f, this,
+                    new RegionOfInterest(16*i,0,16, 32), new Vector(0.15f, -.15f));
+        }
+    }
+
+
+    Animation animationD = new Animation(4, spriTab[3]);
+
+    Animation animationL = new Animation(4, spriTab[0]);
+    Animation animationU = new Animation(4, spriTab[1]);
+    Animation animationR = new Animation(4, spriTab[2]);
+
     @Override
     public void update(float deltaTime) {
+        switch (getOrientation()) {
+            case DOWN -> animationD.update(deltaTime);
+            case RIGHT -> animationR.update(deltaTime);
+            case UP -> animationU.update(deltaTime);
+            case LEFT -> animationL.update(deltaTime);
+
+        }
 
         if (hp < 0) hp = 0;
         Keyboard keyboard = getOwnerArea().getKeyboard();
@@ -140,8 +174,9 @@ public class ICRoguePlayer extends ICRogueActor implements Interactor {
         if (this.projectiles != null) {
             for (int i = 0; i < projectiles.size(); ++i) {
                 if (projectiles.get(i).isConsumed()) {
-                    projectiles.get(i).leaveArea();
+                    //projectiles.get(i).leaveArea();
                     projectiles.remove(projectiles.get(i));
+                    //TODO SI JE COMMENTE CA FIXE LA ACTOR VEUT PAS SE LEAVE MAIS CHELOU
                 }
             }
         }
@@ -186,21 +221,6 @@ public class ICRoguePlayer extends ICRogueActor implements Interactor {
 
     }
 
-    public void rotateMewSpriteToOrientation(Orientation orientation) {
-        if (orientation.equals(Orientation.LEFT)){
-            mew = new Sprite("mew.fixed", .5f, 0.5f, this ,
-                    new RegionOfInterest(16, 0, 16, 21), new Vector(-0.2f, -0.15f));
-        } else if (orientation.equals(Orientation.RIGHT)){
-            mew = new Sprite("mew.fixed", 0.5f, 0.5f, this ,
-                    new RegionOfInterest(48, 0, 16, 21), new Vector(-0.2f, -0.15f));
-        } else if (orientation.equals(Orientation.UP)){
-            mew = new Sprite("mew.fixed", .5f, .5f, this ,
-                    new RegionOfInterest(32, 0, 16, 21), new Vector(-0.2f, -0.15f));
-        } else if (orientation.equals(Orientation.DOWN)) {
-            mew = new Sprite("mew.fixed", .5f, .5f, this,
-                    new RegionOfInterest(0, 0, 16, 21), new Vector(-0.2f, -0.15f));
-        }
-    }
 
 
     /**
@@ -213,7 +233,6 @@ public class ICRoguePlayer extends ICRogueActor implements Interactor {
             if (!isDisplacementOccurs()) {
                 orientate(orientation);
                 rotateSpriteToOrientation(orientation);
-                rotateMewSpriteToOrientation(orientation);
                 move(MOVE_DURATION);
             }
         }
@@ -223,6 +242,14 @@ public class ICRoguePlayer extends ICRogueActor implements Interactor {
 
     @Override
     public void draw(Canvas canvas) {
+        if (isDisplacementOccurs()) {
+            switch (getOrientation()) {
+                case DOWN -> animationD.draw(canvas);
+                case RIGHT -> animationR.draw(canvas);
+                case UP -> animationU.draw(canvas);
+                case LEFT -> animationL.draw(canvas);
+            }
+        } else   sprite.draw(canvas);
         switch ((int) hp) {
             case 3 -> hpOneDisplay.draw(canvas);
             case 2 -> hpHalfDisplay.draw(canvas);
@@ -230,7 +257,6 @@ public class ICRoguePlayer extends ICRogueActor implements Interactor {
         }
         shadow.draw(canvas);
         mew.draw(canvas);
-        sprite.draw(canvas);
         message.draw(canvas);
 
     }
