@@ -1,6 +1,7 @@
 package ch.epfl.cs107.play.game.icrogue.area.level0;
 
 import ch.epfl.cs107.play.game.icrogue.ICRogue;
+import ch.epfl.cs107.play.game.icrogue.RandomHelper;
 import ch.epfl.cs107.play.game.icrogue.area.ICRogueRoom;
 import ch.epfl.cs107.play.game.icrogue.area.Level;
 import ch.epfl.cs107.play.game.icrogue.area.level0.rooms.Level0KeyRoom;
@@ -9,24 +10,51 @@ import ch.epfl.cs107.play.game.icrogue.area.level0.rooms.Level0StaffRoom;
 import ch.epfl.cs107.play.game.icrogue.area.level0.rooms.Level0TurretRoom;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 public class Level0 extends Level {
 
     final int PART_1_KEY_ID = 1;
     final int BOSS_KEY_ID = 996;
 
+    public enum RoomType {
+        TURRET_ROOM(3), // type and number of roon
+        STAFF_ROOM(1),
+        BOSS_KEY(1),
+        SPAWN(1),
+        NORMAL(1);
 
+        int quantity;
+
+        RoomType(int quantity){
+            this.quantity = quantity;
+        }
+
+        public int[] getValues(){
+            int [] out = new int[5];
+            for (int i = 0; i < values().length; ++i)
+                out[i] = values()[i].quantity;
+
+            return out;
+        }
+
+    }
 
     private DiscreteCoordinates startRoom;
     private DiscreteCoordinates spawnCoordinates;
 
-    public Level0() {
-        super(true, new DiscreteCoordinates(2, 0), new int[] {1,4,2}, 4, 2);
-        //super(new DiscreteCoordinates(2, 0), 4, 2);
+    public Level0(boolean randomMap){
+        super(randomMap, new DiscreteCoordinates(2, 0), RoomType.BOSS_KEY.getValues(), 4, 2);
 
-        this.startRoom = new DiscreteCoordinates(1  , 0);
         this.spawnCoordinates = new DiscreteCoordinates(2, 0);
 
+        if (!randomMap) startRoom = new DiscreteCoordinates(1, 0);
+    }
 
+    public Level0() {
+        this(true);
     }
 
     public String getStartTitle(){
@@ -39,6 +67,57 @@ public class Level0 extends Level {
 
     public ICRogueRoom getCurrentArea(){
         return map[1][0];
+    }
+
+    protected void generateSingleRoom(int roomType, DiscreteCoordinates roomCoords){
+        switch (roomType) {
+            case 0 -> setRoom(roomCoords, new Level0TurretRoom(roomCoords));
+            case 1 -> setRoom(roomCoords, new Level0StaffRoom(roomCoords));
+            case 2 -> setRoom(roomCoords, new Level0KeyRoom(roomCoords, BOSS_KEY_ID));
+            case 3 -> {
+                setRoom(roomCoords, new Level0Room(roomCoords));
+                startRoom = roomCoords;
+            }
+            case 4 -> setRoom(roomCoords, new Level0Room(roomCoords));
+        }
+    }
+
+
+
+    @Override
+    protected void generateRoomConnectors(DiscreteCoordinates coords, DiscreteCoordinates[] destCoords, boolean isBossRoom) {
+        Level0Room.Level0Connectors[] orientation = new Level0Room.Level0Connectors[] {Level0Room.Level0Connectors.W,
+                Level0Room.Level0Connectors.N, Level0Room.Level0Connectors.E, Level0Room.Level0Connectors.S};
+        DiscreteCoordinates[] neighbors = coords.getNeighbours().toArray(new DiscreteCoordinates[0]);
+        ArrayList<DiscreteCoordinates> destCoords_a = new ArrayList<>(Arrays.stream(destCoords).toList());
+
+        for (int i = 0; i < neighbors.length; ++i){
+            if (!destCoords_a.contains(neighbors[i]))
+                neighbors[i] = null;
+        }
+
+        if (!isBossRoom){
+            for (int i = 0; i < neighbors.length; ++i) { //ORDER LEFT UP RIGHT DOWN but check for missing
+                if (neighbors[i] != null) {
+                    System.out.println("DOOR CREATED");
+                    setRoomConnector(coords, "icrogue/level0" + neighbors[i].x + "" + neighbors[i].y, orientation[i]);
+                    if (neighbors[i].equals(getBossRoomCoordinates())) {
+                        lockRoomConnector(coords, orientation[i], BOSS_KEY_ID);
+                    }
+                }
+            }
+        } else {
+            for (int i = 0; i < neighbors.length; ++i) //ORDER LEFT UP RIGHT DOWN but check for missing
+                if (neighbors[i] == null ) {
+                    setRoomConnector(coords, "icrogue/level0" + neighbors[i].x + "" + neighbors[i].y, orientation[i]);
+                    lockRoomConnector(coords, orientation[i],  BOSS_KEY_ID);
+                }
+        }
+    }
+
+    @Override
+    protected void generateRoomConnectors(DiscreteCoordinates coords, DiscreteCoordinates[] destCoords) {
+        generateRoomConnectors(coords, destCoords, false);
     }
 
     protected void generateFixedMap(){
