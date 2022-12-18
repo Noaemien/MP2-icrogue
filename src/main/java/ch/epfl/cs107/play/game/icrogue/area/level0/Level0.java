@@ -99,16 +99,16 @@ public class Level0 extends Level {
         if (!isBossRoom){
             for (int i = 0; i < neighbors.length; ++i) { //ORDER LEFT UP RIGHT DOWN but check for missing
                 if (neighbors[i] != null) {
-                    System.out.println("DOOR CREATED");
                     setRoomConnector(coords, "icrogue/level0" + neighbors[i].x + "" + neighbors[i].y, orientation[i]);
                     if (neighbors[i].equals(getBossRoomCoordinates())) {
+                        System.out.println("CREATING BOSS ROOM CONNECTOR");
                         lockRoomConnector(coords, orientation[i], BOSS_KEY_ID);
                     }
                 }
             }
         } else {
             for (int i = 0; i < neighbors.length; ++i) //ORDER LEFT UP RIGHT DOWN but check for missing
-                if (neighbors[i] == null ) {
+                if (neighbors[i] != null ) {
                     setRoomConnector(coords, "icrogue/level0" + neighbors[i].x + "" + neighbors[i].y, orientation[i]);
                     lockRoomConnector(coords, orientation[i],  BOSS_KEY_ID);
                 }

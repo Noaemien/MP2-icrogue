@@ -72,12 +72,12 @@ abstract public class Level {
     public void generateRandomMap(){
         //PLACEMENT DES SALLES
         MapState[][] roomPlacements = generateRandomRoomPlacement();
-        System.out.println("FINAL");
+
         printMap(roomPlacements);
         //GENERATION DES SALLES
         generateRooms(roomPlacements, roomsDistribution);
         generateConnectors(roomPlacements);
-        generateBossRoomConnectors();
+        generateBossRoomConnectors(roomPlacements);
 
 
     }
@@ -94,7 +94,7 @@ abstract public class Level {
         }
     }
 
-    private List<DiscreteCoordinates> findNeighborSlotsOfType(DiscreteCoordinates position, MapState[][] map, MapState state){
+    private List<DiscreteCoordinates> findNeighborSlotsOfType(DiscreteCoordinates position, MapState[][] map, MapState... states){
         List<DiscreteCoordinates> freeSlots = position.getNeighbours();
 
         //remove if out of bounds
@@ -104,8 +104,11 @@ abstract public class Level {
         freeSlots.removeIf(n -> n.y >= nbRooms);
 
         //remove if slot is not empty
-        freeSlots.removeIf(n -> map[n.x][n.y] != state);
-
+        if (states.length == 2) {
+            freeSlots.removeIf(n -> map[n.x][n.y] != states[0] && map[n.x][n.y] != states[1]);
+        } else if (states.length == 1){
+            freeSlots.removeIf(n -> map[n.x][n.y] != states[0]);
+        }
         return freeSlots;
     }
 
@@ -267,16 +270,15 @@ abstract public class Level {
 
         for (DiscreteCoordinates coords: rooms){ // Distribution TurretRoom, StaffRoom, Boss_key, Spawn, Normal
 
-            List<DiscreteCoordinates> destCoords = findNeighborSlotsOfType(coords, map, MapState.CREATED);
-
+            List<DiscreteCoordinates> destCoords = findNeighborSlotsOfType(coords, map, MapState.CREATED, MapState.BOSS_ROOM);
             //generate the connectors
             generateRoomConnectors(coords, destCoords.toArray(new DiscreteCoordinates[0]));
 
         }
     }
 
-    private void generateBossRoomConnectors(){
-        List<DiscreteCoordinates> destCoords = bossRoomCoordinates.getNeighbours();
+    private void generateBossRoomConnectors(MapState[][] map){
+        List<DiscreteCoordinates> destCoords = findNeighborSlotsOfType(bossRoomCoordinates, map, MapState.CREATED);
         generateRoomConnectors(bossRoomCoordinates, destCoords.toArray(new DiscreteCoordinates[0]), true);
     }
 
