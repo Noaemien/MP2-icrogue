@@ -18,6 +18,7 @@ import ch.epfl.cs107.play.math.Vector;
 import ch.epfl.cs107.play.window.Canvas;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 public class Turret extends Enemy {
@@ -70,11 +71,19 @@ public class Turret extends Enemy {
     }
 
     private void moveRandomly(){
-        Orientation[] orientations = new Orientation[] {Orientation.UP, Orientation.LEFT, Orientation.DOWN, Orientation.RIGHT};
+        Orientation[] orientations = new Orientation[] {Orientation.LEFT, Orientation.UP, Orientation.DOWN, Orientation.RIGHT};
+        List<DiscreteCoordinates> border = new ArrayList<>();
+        for (int i = 4; i < 6; ++i ){
+            border.add(new DiscreteCoordinates(0, i));
+            border.add(new DiscreteCoordinates(9, i));
+            border.add(new DiscreteCoordinates(i, 0));
+            border.add(new DiscreteCoordinates(i, 9));
+        }
         if (!isDisplacementOccurs()) {
-            orientate(orientations[(int)(Math.random() * 4)]);
-            //if(getCurrentMainCellCoordinates().jump(getOrientation().toVector()));
-            move(10);
+            orientate(orientations[(int)(Math.random() * 3)]);
+            if(!border.contains(getCurrentMainCellCoordinates().jump(getOrientation().toVector())))
+                move(3);
+            else System.out.println("DENIED");
         }
 
     }
