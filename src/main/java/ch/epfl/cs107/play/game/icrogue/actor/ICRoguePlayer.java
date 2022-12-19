@@ -48,7 +48,7 @@ public class ICRoguePlayer extends ICRogueActor implements Interactor {
 
 
     /// Animation duration in frame number
-    private final static int MOVE_DURATION = 4;
+    private final static int MOVE_DURATION = 2;
 
     private boolean hasStaff = false;
 

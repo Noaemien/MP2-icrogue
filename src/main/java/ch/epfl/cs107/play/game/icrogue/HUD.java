@@ -12,7 +12,7 @@ public class HUD extends ImageGraphics implements Updatable {
 
     private Foreground[][] heartDisplay = new Foreground[3][3];
 
-    Foreground winDisplay = new Foreground("icrogue/WinScreen", 640, 640, new RegionOfInterest(0, 640, 640, 640));
+    Foreground winDisplay = new Foreground("icrogue/WinScreen", 10, 10, new RegionOfInterest(0, 0, 640, 640));
 
 
 
@@ -75,8 +75,7 @@ public class HUD extends ImageGraphics implements Updatable {
             }
 
         }
-        if(ICRogue.hasWin()){
-            winDisplay.draw(canvas);
-        }
+        if(ICRogue.hasWin()) winDisplay.draw(canvas);
+
     }
 }

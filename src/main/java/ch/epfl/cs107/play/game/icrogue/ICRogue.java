@@ -77,13 +77,9 @@ public class ICRogue extends AreaGame{
             player.isInConnector = false;
         }
 
-        if (niveau.isCompleted()){
-            win = true;
-            Foreground winDisplay = new Foreground("icrogue/WinScreen", 640, 640, new RegionOfInterest(0, 0, 640, 640));
-            System.out.println("Win"); //TODO ADD WIN FOREGROUND
-        } else if (player.isDead()) {
-            System.out.println("GameOver");
-        }
+        if (niveau.isCompleted()) win = true;
+            if (player.isDead()) System.out.println("GameOver");
+
 
         super.update(deltaTime);
 
