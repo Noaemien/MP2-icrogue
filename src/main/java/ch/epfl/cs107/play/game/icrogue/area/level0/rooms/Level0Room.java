@@ -8,10 +8,7 @@ import ch.epfl.cs107.play.game.icrogue.ICRogue;
 import ch.epfl.cs107.play.game.icrogue.actor.Connector;
 import ch.epfl.cs107.play.game.icrogue.actor.ICRogueActor;
 import ch.epfl.cs107.play.game.icrogue.actor.ICRoguePlayer;
-import ch.epfl.cs107.play.game.icrogue.actor.items.Cherry;
-import ch.epfl.cs107.play.game.icrogue.actor.items.Item;
-import ch.epfl.cs107.play.game.icrogue.actor.items.Key;
-import ch.epfl.cs107.play.game.icrogue.actor.items.Stick;
+import ch.epfl.cs107.play.game.icrogue.actor.items.*;
 import ch.epfl.cs107.play.game.icrogue.area.ConnectorInRoom;
 import ch.epfl.cs107.play.game.icrogue.area.ICRogueRoom;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
@@ -25,7 +22,9 @@ public class Level0Room  extends ICRogueRoom {
         super(Level0Connectors.E.getAllConnectorsPosition(), Level0Connectors.E.getAllConnectorsOrientation(), "icrogue/Level0Room", tileCoordinates);
     }
 
-
+    public void spawnHeart(DiscreteCoordinates position){
+        registerActor(new Heart(this, Orientation.DOWN, position));
+    }
 
     @Override
     public boolean isOn() {

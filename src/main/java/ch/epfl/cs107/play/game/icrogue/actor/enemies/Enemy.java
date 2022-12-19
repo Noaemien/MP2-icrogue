@@ -10,7 +10,8 @@ import ch.epfl.cs107.play.math.DiscreteCoordinates;
 import java.util.Collections;
 import java.util.List;
 
-public class Enemy extends ICRogueActor implements Interactor { //TODO UN ENNEMI N'EST PAS FORCEMENT UN INTERACTOR
+public class Enemy extends ICRogueActor {
+
 
     private boolean isDead;
 
@@ -32,27 +33,9 @@ public class Enemy extends ICRogueActor implements Interactor { //TODO UN ENNEMI
     }
 
 
-    public void dying() {
+    public void kill() {
         isDead = true;
         leaveArea();
     }
 
-    @Override
-    public List<DiscreteCoordinates> getFieldOfViewCells() {
-        return Collections.singletonList(getCurrentMainCellCoordinates().jump(getOrientation().toVector()));
-    }
-
-    @Override
-    public boolean wantsCellInteraction() {
-        return true;
-    }
-
-    @Override
-    public boolean wantsViewInteraction() {
-        return true;
-    }
-
-    @Override
-    public void interactWith(Interactable other, boolean isCellInteraction) {
-    }
 }

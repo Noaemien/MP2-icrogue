@@ -11,18 +11,20 @@ import ch.epfl.cs107.play.game.icrogue.actor.ICRoguePlayer;
 import ch.epfl.cs107.play.game.icrogue.actor.projectiles.Arrow;
 import ch.epfl.cs107.play.game.icrogue.actor.projectiles.Fire;
 import ch.epfl.cs107.play.game.icrogue.actor.projectiles.Projectile;
+import ch.epfl.cs107.play.game.icrogue.area.level0.rooms.Level0Room;
 import ch.epfl.cs107.play.game.icrogue.handler.ICRogueInteractionHandler;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
 import ch.epfl.cs107.play.math.Vector;
 import ch.epfl.cs107.play.window.Canvas;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 public class Turret extends Enemy {
 
     private Sprite sprite;
 
-    private final float COOLDOWN = 2.f;
+    private final float ARROWCOOLDOWN = .6f;
 
     private float timer = 1.2f;
 
@@ -30,33 +32,11 @@ public class Turret extends Enemy {
 
     private Orientation[] shootingDirections;
 
-
-    private class ICRogueTurretInteractionHandler implements ICRogueInteractionHandler { //TODO TURRET N'est PAS UN INTERACTOR, ENLEVER LE HANDLER
-        @Override
-        public void interactWith(Fire fire, boolean isCellInteraction) {
-            if (isCellInteraction){
-                dying();
-                //fire.consume();
-            }
-        }
-
-        @Override
-        public void interactWith(ICRoguePlayer player, boolean isCellInteraction) {
-            if (isCellInteraction){
-                dying();
-            }
-        }
-    }
-
-    private ICRogueTurretInteractionHandler handler;
-
-
     public Turret(Area area, Orientation orientation, DiscreteCoordinates position, Orientation... shootingDirections) {
         super(area, orientation, position);
         sprite = new Sprite("icrogue/static_npc", 1.5f, 1.5f,
                 this, null, new Vector(-0.25f, 0));
         this.shootingDirections = shootingDirections;
-        handler = new ICRogueTurretInteractionHandler();
     }
 
     @Override
@@ -65,13 +45,32 @@ public class Turret extends Enemy {
     }
 
     public void update(float deltaTime) {
-        if (timer < COOLDOWN) timer += deltaTime;
-        else {
-            timer = 0.f;
-            for (Orientation direction : shootingDirections) {
-                throwArrow(direction);
+        super.update(deltaTime);
+        if (!isDisplacementOccurs()) {
+            if (arrowTimer < ARROWCOOLDOWN) arrowTimer += deltaTime;
+            else {
+                arrowTimer = 0.f;
+                for (Orientation direction : shootingDirections) {
+                    throwArrow(direction);
+                }
+            }
+            if (moveTimer < MOVECOOLDOWN) moveTimer += deltaTime;
+            else {
+                moveTimer = 0.f;
+                arrowTimer = 0.f;
+                moveRandomly();
             }
         }
+
+    }
+
+    private void moveRandomly(){
+        Orientation[] orientations = new Orientation[] {Orientation.UP, Orientation.LEFT, Orientation.DOWN, Orientation.RIGHT};
+        if (!isDisplacementOccurs()) {
+            orientate(orientations[(int)(Math.random() * 4)]);
+            move(10);
+        }
+
     }
 
     public void throwArrow(Orientation orientation) {
@@ -80,15 +79,6 @@ public class Turret extends Enemy {
             projectiles.add(arrow);
     }
 
-    @Override
-    public boolean wantsViewInteraction() {
-        return false;
-    }
-
-    @Override
-    public void interactWith(Interactable other, boolean isCellInteraction) {
-        other.acceptInteraction(this.handler , isCellInteraction);
-    }
 
     @Override
     public void acceptInteraction(AreaInteractionVisitor v, boolean isCellInteraction) {

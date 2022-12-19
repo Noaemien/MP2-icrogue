@@ -4,7 +4,10 @@ import ch.epfl.cs107.play.game.actor.TextGraphics;
 import ch.epfl.cs107.play.game.areagame.Area;
 import ch.epfl.cs107.play.game.areagame.actor.*;
 import ch.epfl.cs107.play.game.areagame.handler.AreaInteractionVisitor;
+import ch.epfl.cs107.play.game.icrogue.HUD;
+import ch.epfl.cs107.play.game.icrogue.actor.enemies.Turret;
 import ch.epfl.cs107.play.game.icrogue.actor.items.Cherry;
+import ch.epfl.cs107.play.game.icrogue.actor.items.Heart;
 import ch.epfl.cs107.play.game.icrogue.actor.items.Key;
 import ch.epfl.cs107.play.game.icrogue.actor.items.Stick;
 import ch.epfl.cs107.play.game.icrogue.actor.projectiles.Fire;
@@ -66,7 +69,9 @@ public class ICRoguePlayer extends ICRogueActor implements Interactor {
 
         @Override
         public void interactWith(Stick stick, boolean isCellInteraction) {
-            if (wantsViewInteraction() && getFieldOfViewCells().equals(stick.getCurrentCells())) {
+
+
+            if (getFieldOfViewCells().equals(stick.getCurrentCells()) && wIsDown()) {
                 stick.collect();
                 hasStaff = true;
             }
@@ -75,7 +80,7 @@ public class ICRoguePlayer extends ICRogueActor implements Interactor {
         @Override
         public void interactWith(Connector connector, boolean isCellInteraction) {
             if (!isCellInteraction) {
-                if (collectedKeys.contains(connector.keyId)) {
+                if (collectedKeys.contains(connector.keyId) && wIsDown()) {
                     connector.setState(Connector.State.OPEN);
                 }
             } else if (!isDisplacementOccurs()) {
@@ -93,16 +98,25 @@ public class ICRoguePlayer extends ICRogueActor implements Interactor {
             }
         }
 
+        @Override
+        public void interactWith(Turret turret, boolean isCellInteraction) {
+            if (isCellInteraction){
+                turret.kill();
+            }
+        }
 
+        @Override
+        public void interactWith(Heart heart, boolean isCellInteraction){
+            if (isCellInteraction){
+               heart.collect();
+               hp += 2;
+               if (hp > 6) hp = 6;
+            }
+        }
     }
 
 
     ICRoguePlayerInteractionHandler handler = new ICRoguePlayerInteractionHandler();
-
-    Foreground hpOneDisplay = new Foreground("zelda/heartDisplay", 1, 1, new RegionOfInterest(32,0,16,16));
-    Foreground hpHalfDisplay = new Foreground("zelda/heartDisplay", 1, 1, new RegionOfInterest(16,0,16,16));
-    Foreground hpNullDisplay = new Foreground("zelda/heartDisplay", 1, 1, new RegionOfInterest(0,0,16,16));
-
 
     public ICRoguePlayer(Area owner, Orientation orientation, DiscreteCoordinates coordinates, String spriteName) {
         super(owner, orientation, coordinates);
@@ -250,11 +264,7 @@ public class ICRoguePlayer extends ICRogueActor implements Interactor {
                 case LEFT -> animationL.draw(canvas);
             }
         } else   sprite.draw(canvas);
-        switch ((int) hp) {
-            case 3 -> hpOneDisplay.draw(canvas);
-            case 2 -> hpHalfDisplay.draw(canvas);
-            case 1 -> hpNullDisplay.draw(canvas);
-        }
+
         shadow.draw(canvas);
         mew.draw(canvas);
         message.draw(canvas);
@@ -292,10 +302,13 @@ public class ICRoguePlayer extends ICRogueActor implements Interactor {
 
     @Override
     public boolean wantsViewInteraction() {
+        return true;
+    }
+
+    private boolean wIsDown(){
         Keyboard keyboard= getOwnerArea().getKeyboard();
         return keyboard.get(Keyboard.W).isPressed(); //retourn true si est W est appuiyé sinon retourne faulse
     }
-
 
 
     @Override

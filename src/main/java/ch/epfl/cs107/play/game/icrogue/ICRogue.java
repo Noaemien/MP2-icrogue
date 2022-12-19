@@ -1,6 +1,7 @@
 package ch.epfl.cs107.play.game.icrogue;
 
 import ch.epfl.cs107.play.game.areagame.AreaGame;
+import ch.epfl.cs107.play.game.areagame.actor.Foreground;
 import ch.epfl.cs107.play.game.areagame.actor.Orientation;
 import ch.epfl.cs107.play.game.icrogue.actor.ICRoguePlayer;
 import ch.epfl.cs107.play.game.icrogue.area.ICRogueRoom;
@@ -11,6 +12,9 @@ import ch.epfl.cs107.play.game.tutosSolution.area.Tuto2Area;
 import ch.epfl.cs107.play.io.DefaultFileSystem;
 import ch.epfl.cs107.play.io.FileSystem;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
+import ch.epfl.cs107.play.math.RegionOfInterest;
+import ch.epfl.cs107.play.math.Vector;
+import ch.epfl.cs107.play.window.Canvas;
 import ch.epfl.cs107.play.window.Keyboard;
 import ch.epfl.cs107.play.window.Window;
 
@@ -70,7 +74,9 @@ public class ICRogue extends AreaGame{
         }
 
         if (niveau.isCompleted()){
-            System.out.println("Win");
+            win = true;
+            Foreground winDisplay = new Foreground("icrogue/WinScreen", 640, 640, new RegionOfInterest(0, 0, 640, 640));
+            System.out.println("Win"); //TODO ADD WIN FOREGROUND
         } else if (player.isDead()) {
             System.out.println("GameOver");
         }
@@ -78,6 +84,8 @@ public class ICRogue extends AreaGame{
         super.update(deltaTime);
 
     }
+
+
 
     @Override
     public void end() {

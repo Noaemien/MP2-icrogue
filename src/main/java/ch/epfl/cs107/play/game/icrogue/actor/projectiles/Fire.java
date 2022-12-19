@@ -10,6 +10,8 @@ import ch.epfl.cs107.play.game.areagame.handler.AreaInteractionVisitor;
 import ch.epfl.cs107.play.game.icrogue.ICRogueBehavior;
 import ch.epfl.cs107.play.game.icrogue.actor.ICRoguePlayer;
 import ch.epfl.cs107.play.game.icrogue.actor.enemies.Turret;
+import ch.epfl.cs107.play.game.icrogue.actor.items.Heart;
+import ch.epfl.cs107.play.game.icrogue.area.ICRogueRoom;
 import ch.epfl.cs107.play.game.icrogue.handler.ICRogueInteractionHandler;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
 import ch.epfl.cs107.play.math.RegionOfInterest;
@@ -17,7 +19,7 @@ import ch.epfl.cs107.play.math.Vector;
 import ch.epfl.cs107.play.window.Canvas;
 
 public class Fire extends Projectile{
-
+    final private double dropHeartProbability = .3f;
 
     Sprite sprite = new Sprite("zelda/fire", 1f, 1f, this ,
             new RegionOfInterest(0, 0, 16, 16), new
@@ -81,6 +83,11 @@ Animation animboom = new Animation(1, boomSprite,false);
         @Override
         public void interactWith(Turret turret, boolean isCellInteraction) {
             if (isCellInteraction) {
+                turret.kill();
+                if (Math.random() < dropHeartProbability){
+                    System.out.println("wot");
+                    getOwnerArea().registerActor(new Heart(getOwnerArea(), getOrientation(), getCurrentMainCellCoordinates()));
+                }
                 consume();
             }
         }
@@ -101,6 +108,7 @@ Animation animboom = new Animation(1, boomSprite,false);
         else animboom.update(deltaTime);
 
     }
+
 
     @Override
     public void draw(Canvas canvas) {

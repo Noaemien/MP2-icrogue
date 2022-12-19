@@ -82,6 +82,8 @@ abstract public class Level {
 
     }
 
+
+
     protected enum MapState {
         NULL , // Empty space
         PLACED , // The room has been placed but not yet explored by the room placement algorithm
