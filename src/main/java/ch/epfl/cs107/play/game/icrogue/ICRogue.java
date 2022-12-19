@@ -33,10 +33,13 @@ public class ICRogue extends AreaGame{
 
     private static boolean win;
 
+    private static boolean loose;
+
     private SoundAcoustics winSound;
 
-    private boolean repeat = false;
+    private boolean winRepeat;
 
+    private boolean looseRepeat;
 
     private int areaIndex;
     /**
@@ -85,14 +88,16 @@ public class ICRogue extends AreaGame{
             player.isInConnector = false;
         }
 
-        if (niveau.isCompleted()&& !repeat) { win = true;
-            repeat=true;
+        if (niveau.isCompleted() && !winRepeat) { win = true;
+            winRepeat = true;
             winSound.shouldBeStarted();
             winSound.bip(getWindow());
         }
 
-            if (player.isDead()) System.out.println("GameOver");
-
+            if (player.isDead() && !looseRepeat){//TODO MARCHE PS
+                loose = true;
+                looseRepeat = true;
+            }
 
         super.update(deltaTime);
 
@@ -107,6 +112,11 @@ public class ICRogue extends AreaGame{
     public static boolean hasWin(){
         return win;
     }
+
+    public static boolean hasLoose(){
+        return loose;
+    }
+
 
     @Override
     public String getTitle() {

@@ -12,8 +12,10 @@ public class HUD extends ImageGraphics implements Updatable {
 
     private Foreground[][] heartDisplay = new Foreground[3][3];
 
-    Foreground winDisplay = new Foreground("icrogue/WinScreen", 10, 10, new RegionOfInterest(0, 0, 640, 640));
-
+    Foreground winDisplay = new Foreground("icrogue/WinScreen", 10, 10,
+            new RegionOfInterest(0, 0, 640, 640));
+    Foreground loseDisplay = new Foreground("icrogue/LoseScreen", 10, 10,
+            new RegionOfInterest(0,0,640,640));
 
 
     public HUD(String name, float width, float height, RegionOfInterest roi, Vector anchor) {
@@ -25,10 +27,6 @@ public class HUD extends ImageGraphics implements Updatable {
     public void initHeartTab(Foreground[][] heartDisplay) {
         for (float i = 0; i < 3; ++i) {
             for (float y = 0; y < 3; ++y) {
-                /*heartDisplay[(int) i][y] = new Foreground("zelda/heartDisplay", 1, 1, new RegionOfInterest(32, 0, 16, 16),
-                        new Vector(i, 0.f)); //full
-                heartDisplay[(int) i][y] = new Foreground("zelda/heartDisplay", 1, 1, new RegionOfInterest(16, 0, 16, 16),
-                        new Vector(i, 0.f)); //mid*/
                 heartDisplay[(int) i][(int) y] = new Foreground("zelda/heartDisplay", 1, 1, new RegionOfInterest((int) y * 16, 0, 16, 16),
                         new Vector(i, 0f)); //empty
             }
@@ -75,7 +73,13 @@ public class HUD extends ImageGraphics implements Updatable {
             }
 
         }
-        if(ICRogue.hasWin()) winDisplay.draw(canvas);
+        if(ICRogue.hasWin()) {
+            winDisplay.draw(canvas);
+        }
+
+        if(ICRogue.hasLoose()) {
+            loseDisplay.draw(canvas);
+        }
 
     }
 }
