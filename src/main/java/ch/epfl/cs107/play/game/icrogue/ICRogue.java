@@ -1,8 +1,10 @@
 package ch.epfl.cs107.play.game.icrogue;
 
+import ch.epfl.cs107.play.game.actor.SoundAcoustics;
 import ch.epfl.cs107.play.game.areagame.AreaGame;
 import ch.epfl.cs107.play.game.areagame.actor.Foreground;
 import ch.epfl.cs107.play.game.areagame.actor.Orientation;
+import ch.epfl.cs107.play.game.areagame.io.ResourcePath;
 import ch.epfl.cs107.play.game.icrogue.actor.ICRoguePlayer;
 import ch.epfl.cs107.play.game.icrogue.area.ICRogueRoom;
 import ch.epfl.cs107.play.game.icrogue.area.Level;
@@ -31,6 +33,11 @@ public class ICRogue extends AreaGame{
 
     private static boolean win;
 
+    private SoundAcoustics winSound;
+
+    private boolean repeat = false;
+
+
     private int areaIndex;
     /**
      * Add all the areas
@@ -46,6 +53,7 @@ public class ICRogue extends AreaGame{
         //player.rotateSpriteToOrientation(player.getOrientation());
         player.enterArea(salleCourante, new DiscreteCoordinates(2, 2));
         salleCourante.visiting();
+        winSound = new SoundAcoustics(ResourcePath.getSound("WinSong")); //TODO PAS FORCEMENT AU BON ENDROIT
     }
 
     private void switchRoom(){
@@ -77,7 +85,12 @@ public class ICRogue extends AreaGame{
             player.isInConnector = false;
         }
 
-        if (niveau.isCompleted()) win = true;
+        if (niveau.isCompleted()&& !repeat) { win = true;
+            repeat=true;
+            winSound.shouldBeStarted();
+            winSound.bip(getWindow());
+        }
+
             if (player.isDead()) System.out.println("GameOver");
 
 
