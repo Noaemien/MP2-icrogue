@@ -26,7 +26,12 @@ public class Turret extends Enemy {
 
     private final float ARROWCOOLDOWN = .6f;
 
-    private float timer = 1.2f;
+    private float arrowTimer = 0f;
+
+    private float moveTimer = 0.f;
+
+    private final float MOVECOOLDOWN = 1.f;
+
 
     private ArrayList<Projectile> projectiles = new ArrayList<Projectile>();
 

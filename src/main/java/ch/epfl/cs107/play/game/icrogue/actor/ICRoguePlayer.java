@@ -29,13 +29,15 @@ import java.util.List;
 import static ch.epfl.cs107.play.game.areagame.actor.Animation.createAnimations; //TODO pas sur de ca a verif
 
 public class ICRoguePlayer extends ICRogueActor implements Interactor {
-    private float hp;
+    private static int hp;
 
     private Sprite hpView;
 
     private TextGraphics message;
 
     private Sprite shadow;
+
+    private HUD hud;
 
     private Sprite mew;
 
@@ -46,7 +48,7 @@ public class ICRoguePlayer extends ICRogueActor implements Interactor {
 
 
     /// Animation duration in frame number
-    private final static int MOVE_DURATION = 5;
+    private final static int MOVE_DURATION = 4;
 
     private boolean hasStaff = false;
 
@@ -120,7 +122,7 @@ public class ICRoguePlayer extends ICRogueActor implements Interactor {
 
     public ICRoguePlayer(Area owner, Orientation orientation, DiscreteCoordinates coordinates, String spriteName) {
         super(owner, orientation, coordinates);
-        iniTab(spriTab);
+        iniSpriteTab(spriTab);
         message = new TextGraphics("PLAYER_1", 0.4f, Color.MAGENTA);
         message.setParent(this);
         message.setAnchor(new Vector(-0.1f, 1.2f));
@@ -131,8 +133,10 @@ public class ICRoguePlayer extends ICRogueActor implements Interactor {
 
         sprite = new Sprite("zelda/player", .75f, 1.5f, this,
                 new RegionOfInterest(0, 0, 16, 32), new Vector(0.15f, -.15f));
+        hud = new HUD(null,640, 640, new RegionOfInterest(0, 0,640, 640),new Vector(0,0));
 
-        hp = 3;
+
+        hp = 6;
         resetMotion();
     }
 
@@ -143,7 +147,13 @@ public class ICRoguePlayer extends ICRogueActor implements Interactor {
         getOwnerArea().setViewCandidate(this);
     }
 
-    public void iniTab(Sprite[][] spriTab){
+
+    public static int getHp(){
+        return hp;
+    }
+
+
+    public void iniSpriteTab(Sprite[][] spriTab){
         for(int i = 0; i < 4; ++i){
             spriTab[0][i] = new Sprite("zelda/player", .75f, 1.5f, this,
                     new RegionOfInterest(16*i,96,16, 32), new Vector(0.15f, -.15f));
@@ -268,7 +278,7 @@ public class ICRoguePlayer extends ICRogueActor implements Interactor {
         shadow.draw(canvas);
         mew.draw(canvas);
         message.draw(canvas);
-
+        hud.draw(canvas);
     }
 
     @Override

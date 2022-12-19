@@ -27,6 +27,10 @@ public class ICRogue extends AreaGame{
 
     private Level0 niveau;
 
+    private HUD hud;
+
+    private static boolean win;
+
     private int areaIndex;
     /**
      * Add all the areas
@@ -89,6 +93,10 @@ public class ICRogue extends AreaGame{
 
     @Override
     public void end() {
+    }
+
+    public static boolean hasWin(){
+        return win;
     }
 
     @Override

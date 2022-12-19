@@ -6,9 +6,13 @@ import ch.epfl.cs107.play.game.areagame.actor.Sprite;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
 import ch.epfl.cs107.play.math.RegionOfInterest;
 import ch.epfl.cs107.play.math.Vector;
+import ch.epfl.cs107.play.window.Button;
+import ch.epfl.cs107.play.window.Canvas;
+import ch.epfl.cs107.play.window.Keyboard;
 
 public class Mew extends ICRogueActor{
 
+    private static final int MOVE_DURATION = 4;
     Sprite sprite;
     /**
      * Default MovableAreaEntity constructor
@@ -44,4 +48,32 @@ public class Mew extends ICRogueActor{
     public void moove(){
 
     }
+
+
+    public void draw(Canvas canvas){
+        sprite.draw(canvas);
+    }
+
+
+    public void update(float deltaTime) {
+        Keyboard keyboard = getOwnerArea().getKeyboard();
+
+        moveIfPressed(Orientation.LEFT, keyboard.get(Keyboard.LEFT));
+        moveIfPressed(Orientation.UP, keyboard.get(Keyboard.UP));
+        moveIfPressed(Orientation.RIGHT, keyboard.get(Keyboard.RIGHT));
+        moveIfPressed(Orientation.DOWN, keyboard.get(Keyboard.DOWN));
+        super.update(deltaTime);
+    }
+
+    private void moveIfPressed(Orientation orientation, ch.epfl.cs107.play.window.Button b){
+        if(b.isDown()) {
+            if (!isDisplacementOccurs()) {
+                orientate(orientation);
+                rotateMewSpriteToOrientation(orientation);
+                move(MOVE_DURATION);
+            }
+        }
+    }
+
+
 }

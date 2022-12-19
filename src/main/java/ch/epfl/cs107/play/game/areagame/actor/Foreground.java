@@ -65,6 +65,14 @@ public class Foreground extends Entity {
     }
 
 
+    public Foreground(String name, int width, int height, RegionOfInterest region, Vector anchor) {
+        super(DiscreteCoordinates.ORIGIN.toVector());
+        sprite = new ImageGraphics(ResourcePath.getForeground(name), width, height, region, anchor, 1.0f, 1000);
+        sprite.setParent(this);
+    }
+
+
+
     /// Foreground implements Graphics
 
     @Override
