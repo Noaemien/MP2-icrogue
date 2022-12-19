@@ -73,6 +73,7 @@ public class Turret extends Enemy {
         Orientation[] orientations = new Orientation[] {Orientation.UP, Orientation.LEFT, Orientation.DOWN, Orientation.RIGHT};
         if (!isDisplacementOccurs()) {
             orientate(orientations[(int)(Math.random() * 4)]);
+            //if(getCurrentMainCellCoordinates().jump(getOrientation().toVector()));
             move(10);
         }
 

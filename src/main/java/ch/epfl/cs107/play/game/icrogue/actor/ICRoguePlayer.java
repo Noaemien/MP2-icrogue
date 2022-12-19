@@ -205,9 +205,9 @@ public class ICRoguePlayer extends ICRogueActor implements Interactor {
             }
         }
 
-        if (isDead()){
-            leaveArea();
-        }
+        //if (isDead()){  NOT NECESSARY WITH HUD
+        //    leaveArea();
+        //}
 
     }
 

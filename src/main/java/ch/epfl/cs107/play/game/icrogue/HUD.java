@@ -73,11 +73,12 @@ public class HUD extends ImageGraphics implements Updatable {
             }
 
         }
-        if(ICRogue.hasWin()) {
+        if(ICRogue.hasWon()) {
             winDisplay.draw(canvas);
         }
 
-        if(ICRogue.hasLoose()) {
+
+        if(ICRogue.hasLost()) {
             loseDisplay.draw(canvas);
         }
 
