@@ -80,10 +80,9 @@ public class Turret extends Enemy {
             border.add(new DiscreteCoordinates(i, 9));
         }
         if (!isDisplacementOccurs()) {
-            orientate(orientations[(int)(Math.random() * 3)]);
+            orientate(orientations[(int)(Math.random() * 4)]);
             if(!border.contains(getCurrentMainCellCoordinates().jump(getOrientation().toVector())))
-                move(3);
-            else System.out.println("DENIED");
+                move(10);
         }
 
     }

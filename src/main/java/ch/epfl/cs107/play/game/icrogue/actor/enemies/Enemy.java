@@ -26,7 +26,11 @@ public class Enemy extends ICRogueActor {
         super(area, orientation, position);
     }
 
-
+    @Override
+    public void update(float deltaTime) {
+        super.update(deltaTime);
+        if (isDead && !isDisplacementOccurs()) leaveArea();
+    }
 
     public boolean hasBeenKilled() {
         return isDead;
@@ -35,7 +39,6 @@ public class Enemy extends ICRogueActor {
 
     public void kill() {
         isDead = true;
-        leaveArea();
     }
 
 }
