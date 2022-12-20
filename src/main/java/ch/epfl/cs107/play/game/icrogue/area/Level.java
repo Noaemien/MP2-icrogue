@@ -321,7 +321,7 @@ abstract public class Level {
     }
 
     protected void setTitle(ICRogueRoom room, DiscreteCoordinates roomCoords){
-        room.behaviorName = "icrogue/level0" + roomCoords.x + "" + roomCoords.y; //TODO PAS SUR
+        room.behaviorName = "icrogue/level0" + roomCoords.x + "" + roomCoords.y;
     }
 
     public boolean isCompleted(){

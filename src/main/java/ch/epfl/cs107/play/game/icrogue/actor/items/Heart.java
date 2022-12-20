@@ -14,7 +14,7 @@ public class Heart extends Item{
     public Heart(Area area, Orientation orientation, DiscreteCoordinates position) {
         super(area, orientation, position);
         setSprite(new Sprite("zelda/heart", 0.6f, 0.6f, this, new RegionOfInterest(0, 0, 16, 16), new
-                Vector(0, 0))); //TODO CHANGE SPRITE TO ANIMATION
+                Vector(0, 0)));
     }
 
     Sprite[] spriTabo = {new Sprite("zelda/heart", 1f, 1f, this,

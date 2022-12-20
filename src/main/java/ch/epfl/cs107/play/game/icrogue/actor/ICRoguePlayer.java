@@ -26,7 +26,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static ch.epfl.cs107.play.game.areagame.actor.Animation.createAnimations; //TODO pas sur de ca a verif
+
 
 public class ICRoguePlayer extends ICRogueActor implements Interactor {
     private static int hp;
@@ -233,9 +233,7 @@ public class ICRoguePlayer extends ICRogueActor implements Interactor {
         if (this.projectiles != null) {
             for (int i = 0; i < projectiles.size(); ++i) {
                 if (projectiles.get(i).isConsumed()) {
-                    //projectiles.get(i).leaveArea();
                     projectiles.remove(projectiles.get(i));
-                    //TODO SI JE COMMENTE CA FIXE LA ACTOR VEUT PAS SE LEAVE MAIS CHELOU
                 }
             }
         }
