@@ -1,9 +1,12 @@
 package ch.epfl.cs107.play.game.icrogue.actor;
 
+import ch.epfl.cs107.play.game.actor.SoundAcoustics;
 import ch.epfl.cs107.play.game.actor.TextGraphics;
 import ch.epfl.cs107.play.game.areagame.Area;
+import ch.epfl.cs107.play.game.areagame.AreaGame;
 import ch.epfl.cs107.play.game.areagame.actor.*;
 import ch.epfl.cs107.play.game.areagame.handler.AreaInteractionVisitor;
+import ch.epfl.cs107.play.game.areagame.io.ResourcePath;
 import ch.epfl.cs107.play.game.icrogue.HUD;
 import ch.epfl.cs107.play.game.icrogue.actor.enemies.Turret;
 import ch.epfl.cs107.play.game.icrogue.actor.items.Cherry;
@@ -12,12 +15,11 @@ import ch.epfl.cs107.play.game.icrogue.actor.items.Key;
 import ch.epfl.cs107.play.game.icrogue.actor.items.Stick;
 import ch.epfl.cs107.play.game.icrogue.actor.projectiles.Fire;
 import ch.epfl.cs107.play.game.icrogue.actor.projectiles.Projectile;
-import ch.epfl.cs107.play.game.icrogue.area.ConnectorInRoom;
-import ch.epfl.cs107.play.game.icrogue.area.level0.rooms.Level0Room;
 import ch.epfl.cs107.play.game.icrogue.handler.ICRogueInteractionHandler;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
 import ch.epfl.cs107.play.math.RegionOfInterest;
 import ch.epfl.cs107.play.math.Vector;
+import ch.epfl.cs107.play.window.Audio;
 import ch.epfl.cs107.play.window.Canvas;
 import ch.epfl.cs107.play.window.Keyboard;
 import ch.epfl.cs107.play.window.Sound;
@@ -29,8 +31,18 @@ import java.util.List;
 
 
 
-public class ICRoguePlayer extends ICRogueActor implements Interactor {
+public class ICRoguePlayer extends ICRogueActor implements Interactor, Audio {
+    private final float STEP_COOLDOWN = 0.5f;
+
+    private float stepTimer;
+
     private static int hp;
+
+    private SoundAcoustics steps;
+
+    private SoundAcoustics ThrowFire;
+
+    private SoundAcoustics aouch;
 
     private TextGraphics message;
 
@@ -144,7 +156,9 @@ public class ICRoguePlayer extends ICRogueActor implements Interactor {
         sprite = new Sprite("zelda/" + playerName, .75f, 1.5f, this,
                 new RegionOfInterest(0, 0, 16, 32), new Vector(0.15f, -.15f));
         hud = new HUD(null,640, 640, new RegionOfInterest(0, 0,640, 640),new Vector(0,0));
-
+        steps = new SoundAcoustics(ResourcePath.getSound("pas"));
+        aouch = new SoundAcoustics(ResourcePath.getSound("Degat"));
+        ThrowFire = new SoundAcoustics(ResourcePath.getSound("Feu-lance"));
 
         hp = 6;
         resetMotion();
@@ -217,6 +231,14 @@ public class ICRoguePlayer extends ICRogueActor implements Interactor {
         moveIfPressed(Orientation.RIGHT, keyboard.get(Keyboard.RIGHT));
         moveIfPressed(Orientation.DOWN, keyboard.get(Keyboard.DOWN));
 
+        if( stepTimer < STEP_COOLDOWN) {
+            stepTimer += deltaTime;
+        } else if(isDisplacementOccurs()) {
+            steps.shouldBeStarted();
+            steps.bip(AreaGame.getWindow());
+            stepTimer = 0.f;
+        }
+
         if (fireBallTimer < FIREBALL_COOLDOWN) fireBallTimer += deltaTime;
             else if (throwingFireball(keyboard.get(Keyboard.X))) {
             fireBallTimer = 0.f;
@@ -245,6 +267,8 @@ public class ICRoguePlayer extends ICRogueActor implements Interactor {
             Projectile newFireBall = new Fire(this.getOwnerArea(), orientation, getCurrentMainCellCoordinates());
             newFireBall.enterArea(this.getOwnerArea(), getCurrentMainCellCoordinates());
             projectiles.add(newFireBall);
+            ThrowFire.shouldBeStarted();
+            ThrowFire.bip(AreaGame.getWindow());
 
         }
     }
@@ -306,6 +330,7 @@ public class ICRoguePlayer extends ICRogueActor implements Interactor {
                 orientate(orientation);
                 rotateSpriteToOrientation(orientation);
                 move(MOVE_DURATION);
+
             }
         }
     }
@@ -423,9 +448,26 @@ public class ICRoguePlayer extends ICRogueActor implements Interactor {
 
     public void inflictDamage(int damage){
         hp -= damage;
+        aouch.shouldBeStarted();
+        aouch.bip(AreaGame.getWindow());
     }
 
     public boolean isDead(){
         return hp <=0;
+    }
+
+    @Override
+    public Sound getSound(String name) {
+        return null;
+    }
+
+    @Override
+    public void playSound(Sound sound, boolean randomFirstStart, float volume, boolean fadeIn, boolean loop, boolean stopOthersOnStart) {
+
+    }
+
+    @Override
+    public boolean isSoundSupported() {
+        return false;
     }
 }
