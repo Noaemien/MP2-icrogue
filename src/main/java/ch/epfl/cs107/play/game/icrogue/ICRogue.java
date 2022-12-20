@@ -22,14 +22,10 @@ import ch.epfl.cs107.play.window.Window;
 
 public class ICRogue extends AreaGame{
 
-    public final static float CAMERA_SCALE_FACTOR = 13.f;
-
     private ICRoguePlayer player;
     private final String[] areas = {"icrogue/Level0Room.png"};
 
-    private Level0 niveau;
-
-    private HUD hud;
+    private Level0 level;
 
     private static boolean win;
 
@@ -41,30 +37,42 @@ public class ICRogue extends AreaGame{
 
     private boolean loseRepeat;
 
-    private int areaIndex;
     /**
-     * Add all the areas
+     * Initialises the level
      */
     private void initLevel(){
-        DiscreteCoordinates coords = new DiscreteCoordinates(0, 0);
-        niveau = new Level0();
-        niveau.addArea(this);
-        setCurrentArea(niveau.getStartTitle(), true);
+        DiscreteCoordinates coords = new DiscreteCoordinates(2, 2);
+        //Init new level
+        level = new Level0();
+        level.addArea(this);
 
-        ICRogueRoom salleCourante = (ICRogueRoom)getCurrentArea();
-        player = new ICRoguePlayer(salleCourante, Orientation.UP, new DiscreteCoordinates(2, 2), "player");
-        //player.rotateSpriteToOrientation(player.getOrientation());
-        player.enterArea(salleCourante, new DiscreteCoordinates(2, 2));
-        salleCourante.visiting();
+        //Set current area
+        setCurrentArea(level.getStartTitle(), true);
+        ICRogueRoom currentArea = (ICRogueRoom)getCurrentArea();
+
+        //Init player
+        player = new ICRoguePlayer(currentArea, Orientation.UP, coords, "player");
+        player.enterArea(currentArea, coords);
+        currentArea.visiting();
+
+        //Init win sound
         winSound = new SoundAcoustics(ResourcePath.getSound("WinSong")); //TODO PAS FORCEMENT AU BON ENDROIT
     }
 
+    /**
+     * Enables the player to transfer from one room to another
+     */
     private void switchRoom(){
+        //Player leaves area
         player.leaveArea();
+
+        //Set current area to new room
         setCurrentArea(player.connectorDestRoom, true);
-        ICRogueRoom salleCourante = (ICRogueRoom)getCurrentArea();
-        player.enterArea(salleCourante, player.connectorDestCoords);
-        salleCourante.visiting();
+        ICRogueRoom currentArea = (ICRogueRoom)getCurrentArea();
+
+        //Player enters new room
+        player.enterArea(currentArea, player.connectorDestCoords);
+        currentArea.visiting();
 
     }
 
@@ -78,6 +86,7 @@ public class ICRogue extends AreaGame{
 
     @Override
     public void update(float deltaTime) {
+        //Reset level if R is pressed
         Keyboard keyboard= getCurrentArea().getKeyboard();
         if (keyboard.get(Keyboard.R).isPressed()){
             initLevel();
@@ -87,24 +96,25 @@ public class ICRogue extends AreaGame{
             winRepeat = false;
         }
 
+        //Make player switch room when he is in connector
         if(player.isInConnector){
             switchRoom();
             player.isInConnector = false;
         }
 
-        if (niveau.isCompleted() && !winRepeat) {
+        //If level is completed enable win procedure
+        if (level.isCompleted() && !winRepeat) {
             win = true;
             winRepeat = true;
             winSound.shouldBeStarted();
             winSound.bip(getWindow());
         }
 
-        if (player.isDead()){
+        //If player is dead enable lose procedure
+        if (player.isDead() && !loseRepeat){
             lose = true;
             loseRepeat = true;
         }
-
-
 
         super.update(deltaTime);
 
@@ -114,12 +124,21 @@ public class ICRogue extends AreaGame{
 
     @Override
     public void end() {
+        super.end();
     }
 
+    /**
+     * returns if the game is won
+     * @return (Boolean) win
+     */
     public static boolean hasWon(){
         return win;
     }
 
+    /**
+     * returns if the game is lost
+     * @return (Boolean) lose
+     */
     public static boolean hasLost(){
         return lose;
     }
@@ -129,6 +148,4 @@ public class ICRogue extends AreaGame{
     public String getTitle() {
             return "ICRogue";
         }
-
-
 }
