@@ -20,6 +20,7 @@ import ch.epfl.cs107.play.math.RegionOfInterest;
 import ch.epfl.cs107.play.math.Vector;
 import ch.epfl.cs107.play.window.Canvas;
 import ch.epfl.cs107.play.window.Keyboard;
+import ch.epfl.cs107.play.window.Sound;
 
 import java.awt.Color;
 import java.util.ArrayList;
@@ -65,6 +66,8 @@ public class ICRoguePlayer extends ICRogueActor implements Interactor {
     public boolean isInConnector = false;
     public String connectorDestRoom;
     public DiscreteCoordinates connectorDestCoords;
+
+
 
     private class ICRoguePlayerInteractionHandler implements ICRogueInteractionHandler {
         @Override

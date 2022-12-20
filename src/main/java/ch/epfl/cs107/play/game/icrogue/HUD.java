@@ -23,11 +23,14 @@ public class HUD extends ImageGraphics implements Updatable {
         initHeartTab(heartDisplay);
     }
 
-
+    /**
+     * Initialises the array of heart sprites
+     * @param heartDisplay (Foreground[][]): array of heart sprites
+     */
     public void initHeartTab(Foreground[][] heartDisplay) {
-        for (float i = 0; i < 3; ++i) {
-            for (float y = 0; y < 3; ++y) {
-                heartDisplay[(int) i][(int) y] = new Foreground("zelda/heartDisplay", 1, 1, new RegionOfInterest((int) y * 16, 0, 16, 16),
+        for (int i = 0; i < 3; ++i) {
+            for (int y = 0; y < 3; ++y) {
+                heartDisplay[i][y] = new Foreground("zelda/heartDisplay", 1, 1, new RegionOfInterest(y * 16, 0, 16, 16),
                         new Vector(i, 0f)); //empty
             }
         }
@@ -35,6 +38,7 @@ public class HUD extends ImageGraphics implements Updatable {
 
     @Override
     public void update(float deltaTime) {
+
     }
 
     @Override

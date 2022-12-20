@@ -3,7 +3,6 @@ package ch.epfl.cs107.play.game.icrogue;
 import ch.epfl.cs107.play.game.areagame.AreaBehavior;
 import ch.epfl.cs107.play.game.areagame.actor.Interactable;
 import ch.epfl.cs107.play.game.areagame.handler.AreaInteractionVisitor;
-import ch.epfl.cs107.play.game.icrogue.actor.projectiles.Projectile;
 import ch.epfl.cs107.play.game.icrogue.handler.ICRogueInteractionHandler;
 import ch.epfl.cs107.play.window.Window;
 
@@ -11,7 +10,7 @@ public class ICRogueBehavior extends AreaBehavior {
 
 
     public enum CellType{
-        //https://stackoverflow.com/questions/25761438/understanding-bufferedimage-getrgb-output-values
+
         NONE(0,false), // Should never have been used except in the toType method
         GROUND(-16777216, true), // traversable
         WALL(-14112955, false), // non traversable
@@ -37,7 +36,7 @@ public class ICRogueBehavior extends AreaBehavior {
     }
 
     /**
-     * Default Tuto2Behavior Constructor
+     * Default ICRogueBehavior Constructor
      * @param window (Window), not null
      * @param name (String): Name of the Behavior, not null
      */
@@ -54,7 +53,7 @@ public class ICRogueBehavior extends AreaBehavior {
     }
 
     /**
-     * Cell adapted to the Tuto2 game
+     * Cell adapted to the ICRogue game
      */
     public class ICRogueCell extends ICRogueBehavior.Cell {
         /// Type of the cell following the enum
@@ -80,6 +79,10 @@ public class ICRogueBehavior extends AreaBehavior {
             return true;
         }
 
+        /**
+         * Returns true if all entities on cell are traversable else false
+         * @return boolean
+         */
         protected boolean isAllEntitiesTraversable(){
             for (Interactable entity: this.entities){
                 if (entity.takeCellSpace()) return false;
