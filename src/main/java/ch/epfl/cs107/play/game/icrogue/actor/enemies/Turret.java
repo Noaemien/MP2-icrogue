@@ -1,12 +1,15 @@
 package ch.epfl.cs107.play.game.icrogue.actor.enemies;
 
+import ch.epfl.cs107.play.game.actor.SoundAcoustics;
 import ch.epfl.cs107.play.game.areagame.Area;
+import ch.epfl.cs107.play.game.areagame.AreaGame;
 import ch.epfl.cs107.play.game.areagame.actor.Interactable;
 
 import ch.epfl.cs107.play.game.areagame.actor.Orientation;
 import ch.epfl.cs107.play.game.areagame.actor.Sprite;
 
 import ch.epfl.cs107.play.game.areagame.handler.AreaInteractionVisitor;
+import ch.epfl.cs107.play.game.areagame.io.ResourcePath;
 import ch.epfl.cs107.play.game.icrogue.actor.ICRoguePlayer;
 import ch.epfl.cs107.play.game.icrogue.actor.projectiles.Arrow;
 import ch.epfl.cs107.play.game.icrogue.actor.projectiles.Fire;
@@ -24,6 +27,10 @@ import java.util.Random;
 public class Turret extends Enemy {
 
     private Sprite sprite;
+
+    private SoundAcoustics mobDeath;
+
+    private SoundAcoustics throwArrow;
 
     private final float ARROWCOOLDOWN = .6f;
 
@@ -43,11 +50,21 @@ public class Turret extends Enemy {
         sprite = new Sprite("icrogue/static_npc", 1.5f, 1.5f,
                 this, null, new Vector(-0.25f, 0));
         this.shootingDirections = shootingDirections;
+        throwArrow = new SoundAcoustics((ResourcePath.getSound("Flèche-lance")));
+        mobDeath = new SoundAcoustics((ResourcePath.getSound("mobDeath")));
     }
 
     @Override
     public void draw(Canvas canvas) {
         if(!hasBeenKilled()) sprite.draw(canvas);
+    }
+
+    @Override
+    public void kill() {
+        super.kill();
+        mobDeath.shouldBeStarted();
+        mobDeath.bip(AreaGame.getWindow());
+
     }
 
     public void update(float deltaTime) {
@@ -59,6 +76,8 @@ public class Turret extends Enemy {
                 for (Orientation direction : shootingDirections) {
                     throwArrow(direction);
                 }
+                throwArrow.shouldBeStarted();
+                throwArrow.bip(AreaGame.getWindow());
             }
             if (moveTimer < MOVECOOLDOWN) moveTimer += deltaTime;
             else {
@@ -82,7 +101,7 @@ public class Turret extends Enemy {
         if (!isDisplacementOccurs()) {
             orientate(orientations[(int)(Math.random() * 4)]);
             if(!border.contains(getCurrentMainCellCoordinates().jump(getOrientation().toVector())))
-                move(10);
+                move(2);
         }
 
     }
