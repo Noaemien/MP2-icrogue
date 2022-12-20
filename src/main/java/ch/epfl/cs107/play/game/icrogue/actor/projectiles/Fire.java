@@ -75,7 +75,7 @@ Animation animboom = new Animation(1, boomSprite,false);
         public void interactWith(ICRogueBehavior.ICRogueCell cell, boolean isCellInteraction) {
             if (!isCellInteraction) {
                 if (cell.getType().equals(ICRogueBehavior.CellType.WALL) || cell.getType() == ICRogueBehavior.CellType.HOLE) {
-                    consume(); //TODO MESSAGE DANS CONSOLE CANNOT BE COMPLETELY REMOVED.
+                    consume();
                 }
             }
         }
