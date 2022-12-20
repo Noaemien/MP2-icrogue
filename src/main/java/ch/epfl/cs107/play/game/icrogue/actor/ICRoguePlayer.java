@@ -31,8 +31,6 @@ import static ch.epfl.cs107.play.game.areagame.actor.Animation.createAnimations;
 public class ICRoguePlayer extends ICRogueActor implements Interactor {
     private static int hp;
 
-    private Sprite hpView;
-
     private TextGraphics message;
 
     private Sprite shadow;
@@ -45,10 +43,18 @@ public class ICRoguePlayer extends ICRogueActor implements Interactor {
 
     private Sprite[][] spriTab = new Sprite[4][4];
 
+    private Sprite[][] staffTab = new Sprite[4][4];
+
+    private String playerName = "player";
+
+    private final float FIREBALL_COOLDOWN = .65f;
+
+    private float fireBallTimer;
+
 
 
     /// Animation duration in frame number
-    private final static int MOVE_DURATION = 2;
+    private final static int MOVE_DURATION = 4;
 
     private boolean hasStaff = false;
 
@@ -123,6 +129,7 @@ public class ICRoguePlayer extends ICRogueActor implements Interactor {
     public ICRoguePlayer(Area owner, Orientation orientation, DiscreteCoordinates coordinates, String spriteName) {
         super(owner, orientation, coordinates);
         iniSpriteTab(spriTab);
+        iniStaffTab(staffTab);
         message = new TextGraphics("PLAYER_1", 0.4f, Color.MAGENTA);
         message.setParent(this);
         message.setAnchor(new Vector(-0.1f, 1.2f));
@@ -131,7 +138,7 @@ public class ICRoguePlayer extends ICRogueActor implements Interactor {
         mew = new Sprite("mew.fixed", 0.5f, 0.5f, this,
                 new RegionOfInterest(0, 0, 16, 32), new Vector(-0.2f, -.15f));
 
-        sprite = new Sprite("zelda/player", .75f, 1.5f, this,
+        sprite = new Sprite("zelda/" + playerName, .75f, 1.5f, this,
                 new RegionOfInterest(0, 0, 16, 32), new Vector(0.15f, -.15f));
         hud = new HUD(null,640, 640, new RegionOfInterest(0, 0,640, 640),new Vector(0,0));
 
@@ -166,20 +173,44 @@ public class ICRoguePlayer extends ICRogueActor implements Interactor {
         }
     }
 
+    public void iniStaffTab(Sprite[][] staffTab){
+        for(int i = 0; i < 4; ++i){
+            staffTab[0][i] = new Sprite("zelda/player.staff_water", 1.5f, 1.5f, this,
+                    new RegionOfInterest(32*i,96,32, 32), new Vector(-0.20f, -.15f));
+            staffTab[1][i] = new Sprite("zelda/player.staff_water", 1.5f, 1.5f, this,
+                    new RegionOfInterest(32*i,64,32, 32), new Vector(-0.20f, -.15f));
+            staffTab[2][i] = new Sprite("zelda/player.staff_water", 1.5f, 1.5f, this,
+                    new RegionOfInterest(32*i,32,32, 32), new Vector(-0.20f, -.15f));
+            staffTab[3][i] = new Sprite("zelda/player.staff_water", 1.5f, 1.5f, this,
+                    new RegionOfInterest(32*i,0,32, 32), new Vector(-0.20f, -.15f));
+        }
+    }
 
+    Animation staffanimationD = new Animation(4,staffTab[3]);
+    Animation staffanimationU = new Animation(4,staffTab[2]);
+    Animation staffanimationR = new Animation(4,staffTab[1]);
+    Animation staffanimationL = new Animation(4,staffTab[0]);
     Animation animationD = new Animation(4, spriTab[3]);
-
     Animation animationL = new Animation(4, spriTab[0]);
     Animation animationU = new Animation(4, spriTab[1]);
     Animation animationR = new Animation(4, spriTab[2]);
 
     @Override
     public void update(float deltaTime) {
-        switch (getOrientation()) {
-            case DOWN -> animationD.update(deltaTime);
-            case RIGHT -> animationR.update(deltaTime);
-            case UP -> animationU.update(deltaTime);
-            case LEFT -> animationL.update(deltaTime);
+        if(!hasStaff) {
+            switch (getOrientation()) {
+                case DOWN -> animationD.update(deltaTime);
+                case RIGHT -> animationR.update(deltaTime);
+                case UP -> animationU.update(deltaTime);
+                case LEFT -> animationL.update(deltaTime);
+            }
+        } else {
+                switch (getOrientation()) {
+                    case DOWN -> staffanimationD.update(deltaTime);
+                case RIGHT -> staffanimationR.update(deltaTime);
+                case UP -> staffanimationU.update(deltaTime);
+                case LEFT -> staffanimationL.update(deltaTime);
+            }
 
         }
 
@@ -191,8 +222,12 @@ public class ICRoguePlayer extends ICRogueActor implements Interactor {
         moveIfPressed(Orientation.RIGHT, keyboard.get(Keyboard.RIGHT));
         moveIfPressed(Orientation.DOWN, keyboard.get(Keyboard.DOWN));
 
-        fireBallIfXDown(getOrientation(), keyboard.get(Keyboard.X));
+        if (fireBallTimer < FIREBALL_COOLDOWN) fireBallTimer += deltaTime;
+            else if (throwingFireball(keyboard.get(Keyboard.X))) {
+            fireBallTimer = 0.f;
+            fireBallIfXDown(getOrientation(), keyboard.get(Keyboard.X));
 
+        }
         super.update(deltaTime);
 
         if (this.projectiles != null) {
@@ -204,6 +239,7 @@ public class ICRoguePlayer extends ICRogueActor implements Interactor {
                 }
             }
         }
+        if (hasStaff) switchPlayerName();
 
         //if (isDead()){  NOT NECESSARY WITH HUD
         //    leaveArea();
@@ -212,7 +248,7 @@ public class ICRoguePlayer extends ICRogueActor implements Interactor {
     }
 
     public void fireBallIfXDown(Orientation orientation, ch.epfl.cs107.play.window.Button b) {
-        if (b.isPressed() && hasStaff && !isDisplacementOccurs()) {
+        if (b.isDown() && hasStaff && !isDisplacementOccurs()) {
             Projectile newFireBall = new Fire(this.getOwnerArea(), orientation, getCurrentMainCellCoordinates());
             newFireBall.enterArea(this.getOwnerArea(), getCurrentMainCellCoordinates());
             projectiles.add(newFireBall);
@@ -226,21 +262,40 @@ public class ICRoguePlayer extends ICRogueActor implements Interactor {
      * @param orientation (Orientation): given orientation, not null
      */
     public void rotateSpriteToOrientation(Orientation orientation) {
-        if (orientation.equals(Orientation.LEFT)) {
-            sprite = new Sprite("zelda/player" , .75f, 1.5f, this,
-                    new RegionOfInterest(0, 96, 16, 32), new Vector(.15f,
-                    -.15f));
-        } else if (orientation.equals(Orientation.RIGHT)) {
-            sprite = new Sprite("zelda/player" , .75f, 1.5f, this,
-                    new RegionOfInterest(0, 32, 16, 32), new Vector(.15f,
-                    -.15f));
-        } else if (orientation.equals(Orientation.UP)) {
-            sprite = new Sprite("zelda/player" , .75f, 1.5f, this,
-                    new RegionOfInterest(0, 64, 16, 32), new Vector(.15f,
-                    -.15f));
-        } else if (orientation.equals(Orientation.DOWN)) {
-            sprite = new Sprite("zelda/player" , .75f, 1.5f, this,
-                    new RegionOfInterest(0, 0, 16, 32), new Vector(.15f, -.15f));
+        if (!hasStaff) {
+            if (orientation.equals(Orientation.LEFT)) {
+                sprite = new Sprite("zelda/player", .75f, 1.5f, this,
+                        new RegionOfInterest(0, 96, 16, 32), new Vector(.15f,
+                        -.15f));
+            } else if (orientation.equals(Orientation.RIGHT)) {
+                sprite = new Sprite("zelda/player", .75f, 1.5f, this,
+                        new RegionOfInterest(0, 32, 16, 32), new Vector(.15f,
+                        -.15f));
+            } else if (orientation.equals(Orientation.UP)) {
+                sprite = new Sprite("zelda/player", .75f, 1.5f, this,
+                        new RegionOfInterest(0, 64, 16, 32), new Vector(.15f,
+                        -.15f));
+            } else if (orientation.equals(Orientation.DOWN)) {
+                sprite = new Sprite("zelda/player", .75f, 1.5f, this,
+                        new RegionOfInterest(0, 0, 16, 32), new Vector(.15f, -.15f));
+            }
+        } else {
+            if (orientation.equals(Orientation.DOWN)) {
+                sprite = new Sprite("zelda/player.staff_water", 1.5f, 1.5f, this,
+                        new RegionOfInterest(64, 0, 32, 32), new Vector(-.20f, -.25f));
+            } else if (orientation.equals(Orientation.UP)) {
+                sprite = new Sprite("zelda/player.staff_water", 1.5f, 1.5f, this,
+                        new RegionOfInterest(64, 32, 32, 32), new Vector(-.20f,
+                        -.25f));
+            } else if (orientation.equals(Orientation.RIGHT)) {
+                sprite = new Sprite("zelda/player.staff_water", 1.5f, 1.5f, this,
+                        new RegionOfInterest(64, 64, 32, 32), new Vector(-.20f,
+                        -.25f));
+            } else if (orientation.equals(Orientation.LEFT)) {
+                sprite = new Sprite("zelda/player.staff_water", 1.5f, 1.5f, this,
+                        new RegionOfInterest(64, 96, 32, 32), new Vector(-.20f, -.25f));
+            }
+
         }
 
     }
@@ -262,18 +317,60 @@ public class ICRoguePlayer extends ICRogueActor implements Interactor {
         }
     }
 
+    /** Switchs the name of the player when is collecting the staff
+     */
+    public void switchPlayerName(){
+        playerName = "player.staff_water";
+    }
+
+    /*public void switchSprite(){
+        sprite = new Sprite("zelda/player.staff_water", 1.5f, 1.5f, this,
+                new RegionOfInterest(64, 0, 32, 32), new Vector(-.17f, -.25f));
+    }*/
+
+    /** tells if the player is throwing fireball
+     @param b Button the button which has to be pressed
+     */
+    public boolean throwingFireball(   ch.epfl.cs107.play.window.Button b){
+        return (b.isDown() && (hasStaff && !isDisplacementOccurs()));
+    }
+
+    /** tells if the player is moving
+    @param b Button the button which has to be pressed
+     */
+    public boolean moving(   ch.epfl.cs107.play.window.Button b){
+        return (b.isDown());
+    }
+
 
 
     @Override
     public void draw(Canvas canvas) {
-        if (isDisplacementOccurs()) {
+        Keyboard keyboard = getOwnerArea().getKeyboard();
+        if (!hasStaff) {
+            if (isDisplacementOccurs()) {
+                switch (getOrientation()) {
+                    case DOWN -> animationD.draw(canvas);
+                    case RIGHT -> animationR.draw(canvas);
+                    case UP -> animationU.draw(canvas);
+                    case LEFT -> animationL.draw(canvas);
+                }
+            } else sprite.draw(canvas);
+        } else {
+            if ( moving(keyboard.get(Keyboard.UP))
+                    || moving(keyboard.get(Keyboard.DOWN))
+                    || moving(keyboard.get(Keyboard.RIGHT))
+                    || moving(keyboard.get(Keyboard.LEFT))
+                    || throwingFireball(keyboard.get(Keyboard.X))){
             switch (getOrientation()) {
-                case DOWN -> animationD.draw(canvas);
-                case RIGHT -> animationR.draw(canvas);
-                case UP -> animationU.draw(canvas);
-                case LEFT -> animationL.draw(canvas);
+                case DOWN -> staffanimationD.draw(canvas);
+                case RIGHT -> staffanimationR.draw(canvas);
+                case UP -> staffanimationU.draw(canvas);
+                case LEFT -> staffanimationL.draw(canvas);
             }
-        } else   sprite.draw(canvas);
+        } else sprite.draw(canvas);
+        }
+
 
         shadow.draw(canvas);
         mew.draw(canvas);

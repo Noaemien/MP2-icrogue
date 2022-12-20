@@ -19,7 +19,8 @@ import ch.epfl.cs107.play.math.Vector;
 import ch.epfl.cs107.play.window.Canvas;
 
 public class Fire extends Projectile{
-    final private double dropHeartProbability = .3f;
+    private final double DROP_HEART_PROPABILITY = .3f;
+
 
     Sprite sprite = new Sprite("zelda/fire", 1f, 1f, this ,
             new RegionOfInterest(0, 0, 16, 16), new
@@ -84,8 +85,7 @@ Animation animboom = new Animation(1, boomSprite,false);
         public void interactWith(Turret turret, boolean isCellInteraction) {
             if (isCellInteraction) {
                 turret.kill();
-                if (Math.random() < dropHeartProbability){
-                    System.out.println("wot");
+                if (Math.random() < DROP_HEART_PROPABILITY){
                     getOwnerArea().registerActor(new Heart(getOwnerArea(), getOrientation(), getCurrentMainCellCoordinates()));
                 }
                 consume();
