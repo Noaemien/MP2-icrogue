@@ -12,12 +12,6 @@ public class HUD extends ImageGraphics implements Updatable {
 
     private Foreground[][] heartDisplay = new Foreground[3][3];
 
-    Foreground winDisplay = new Foreground("icrogue/WinScreen", 10, 10,
-            new RegionOfInterest(0, 0, 640, 640));
-    Foreground loseDisplay = new Foreground("icrogue/LoseScreen", 10, 10,
-            new RegionOfInterest(0,0,640,640));
-
-
     public HUD(String name, float width, float height, RegionOfInterest roi, Vector anchor) {
         super(name, width, height, roi, anchor);
         initHeartTab(heartDisplay);
@@ -79,15 +73,5 @@ public class HUD extends ImageGraphics implements Updatable {
             }
 
         }
-        /*
-        //Display win screen on win
-        if(ICRogue.hasWon()) {
-            winDisplay.draw(canvas);
-        }else //Display lose screen on lose
-        if(ICRogue.hasLost()) {
-            loseDisplay.draw(canvas);
-
-        }
-        */
     }
 }
