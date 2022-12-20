@@ -2,6 +2,7 @@ package ch.epfl.cs107.play.game.icrogue;
 
 import ch.epfl.cs107.play.game.actor.SoundAcoustics;
 import ch.epfl.cs107.play.game.areagame.AreaGame;
+import ch.epfl.cs107.play.game.areagame.actor.Foreground;
 import ch.epfl.cs107.play.game.areagame.actor.Orientation;
 import ch.epfl.cs107.play.game.areagame.io.ResourcePath;
 import ch.epfl.cs107.play.game.icrogue.actor.ICRoguePlayer;
@@ -9,12 +10,15 @@ import ch.epfl.cs107.play.game.icrogue.area.ICRogueRoom;
 import ch.epfl.cs107.play.game.icrogue.area.level0.Level0;
 import ch.epfl.cs107.play.io.FileSystem;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
+import ch.epfl.cs107.play.math.RegionOfInterest;
+import ch.epfl.cs107.play.math.Vector;
 import ch.epfl.cs107.play.window.Keyboard;
 import ch.epfl.cs107.play.window.Window;
 
 public class ICRogue extends AreaGame{
 
     private ICRoguePlayer player;
+
     //private final String[] areas = {"icrogue/Level0Room.png"};
 
     private Level0 level;
@@ -29,6 +33,13 @@ public class ICRogue extends AreaGame{
 
     private boolean loseRepeat;
 
+    private ICRogueRoom currentArea;
+
+    Foreground winDisplay = new Foreground("icrogue/WinScreen", 10, 10,
+            new RegionOfInterest(0, 0, 640, 640));
+    Foreground loseDisplay = new Foreground("icrogue/LoseScreen", 10, 10,
+            new RegionOfInterest(0,0,640,640));
+
     /**
      * Initialises the level
      */
@@ -40,7 +51,7 @@ public class ICRogue extends AreaGame{
 
         //Set current area
         setCurrentArea(level.getStartTitle(), true);
-        ICRogueRoom currentArea = (ICRogueRoom)getCurrentArea();
+        currentArea = (ICRogueRoom)getCurrentArea();
 
         //Init player
         player = new ICRoguePlayer(currentArea, Orientation.UP, coords, "player");
@@ -49,6 +60,7 @@ public class ICRogue extends AreaGame{
 
         //Init win sound
         winSound = new SoundAcoustics(ResourcePath.getSound("WinSong")); //TODO PAS FORCEMENT AU BON ENDROIT
+
     }
 
     /**
@@ -60,7 +72,7 @@ public class ICRogue extends AreaGame{
 
         //Set current area to new room
         setCurrentArea(player.connectorDestRoom, true);
-        ICRogueRoom currentArea = (ICRogueRoom)getCurrentArea();
+        currentArea = (ICRogueRoom)getCurrentArea();
 
         //Player enters new room
         player.enterArea(currentArea, player.connectorDestCoords);
@@ -96,6 +108,7 @@ public class ICRogue extends AreaGame{
 
         //If level is completed enable win procedure
         if (level.isCompleted() && !winRepeat) {
+            currentArea.registerActor(winDisplay);
             win = true;
             winRepeat = true;
             winSound.shouldBeStarted();
@@ -104,8 +117,10 @@ public class ICRogue extends AreaGame{
 
         //If player is dead enable lose procedure
         if (player.isDead() && !loseRepeat){
+            currentArea.registerActor(loseDisplay);
             lose = true;
             loseRepeat = true;
+
         }
 
         super.update(deltaTime);

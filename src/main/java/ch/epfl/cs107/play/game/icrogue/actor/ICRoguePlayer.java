@@ -150,14 +150,6 @@ public class ICRoguePlayer extends ICRogueActor implements Interactor {
         resetMotion();
     }
 
-    /**
-     * Center the camera on the player
-     */
-    public void centerCamera() {
-        getOwnerArea().setViewCandidate(this);
-    }
-
-
     public static int getHp(){
         return hp;
     }
@@ -242,9 +234,9 @@ public class ICRoguePlayer extends ICRogueActor implements Interactor {
         }
         if (hasStaff) switchPlayerName();
 
-        //if (isDead()){  NOT NECESSARY WITH HUD
-        //    leaveArea();
-        //}
+        if (isDead()){  //NOT NECESSARY WITH HUD
+            leaveArea();
+        }
 
     }
 
