@@ -16,7 +16,7 @@ import java.util.Map;
 abstract public class AreaGame implements Game, PauseMenu.Pausable {
 
     // Context objects
-    private Window window;
+    private static Window window;
     private FileSystem fileSystem;
     /// A map containing all the Area of the Game
     private Map<String, Area> areas;
@@ -79,7 +79,7 @@ abstract public class AreaGame implements Game, PauseMenu.Pausable {
     }
 
     /**@return (Window) : the Graphic and Audio context*/
-    protected final Window getWindow(){
+    public final static Window getWindow(){
         return window;
     }
 

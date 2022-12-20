@@ -1,7 +1,10 @@
 package ch.epfl.cs107.play.game.icrogue.area;
 
+import ch.epfl.cs107.play.game.actor.SoundAcoustics;
 import ch.epfl.cs107.play.game.areagame.Area;
+import ch.epfl.cs107.play.game.areagame.AreaGame;
 import ch.epfl.cs107.play.game.areagame.actor.Orientation;
+import ch.epfl.cs107.play.game.areagame.io.ResourcePath;
 import ch.epfl.cs107.play.game.icrogue.ICRogue;
 import ch.epfl.cs107.play.game.icrogue.ICRogueBehavior;
 import ch.epfl.cs107.play.game.icrogue.actor.Connector;
@@ -24,6 +27,10 @@ public abstract class ICRogueRoom extends Area implements Logic {
     final protected DiscreteCoordinates roomCoordinates;
     protected String behaviorName;
 
+    private SoundAcoustics door;
+
+    private boolean reapeted;
+
     protected List<Connector> connectors = new ArrayList<Connector>();
 
     protected ICRogueRoom(List<DiscreteCoordinates > connectorsCoordinates ,
@@ -32,6 +39,8 @@ public abstract class ICRogueRoom extends Area implements Logic {
         this.roomCoordinates = roomCoordinates;
         this.behaviorName = behaviorName;
         initConnectors(connectorsCoordinates, orientations);
+        door = new SoundAcoustics(ResourcePath.getSound("porte"));
+
     }
 
     private void initConnectors(List<DiscreteCoordinates > connectorsCoordinates , List<Orientation> orientations){
@@ -116,8 +125,11 @@ public abstract class ICRogueRoom extends Area implements Logic {
             connectors.get(0).setState(Connector.State.LOCKED);
         }
 
-        if (isCompleted()){ //TODO: SI ON VEUT FAIRE QUE LES PORTENT SPAWN MEME PAS QUAND TU ENTRE DANS LA SALLE SI C'EST PAS UNE ItEM ROOM
+        if (isCompleted() && !reapeted){ //TODO: SI ON VEUT FAIRE QUE LES PORTENT SPAWN MEME PAS QUAND TU ENTRE DANS LA SALLE SI C'EST PAS UNE ItEM ROOM
             setAllConnectorStates(Connector.State.OPEN);
+            door.shouldBeStarted();
+            door.bip(AreaGame.getWindow());
+            reapeted = true;
         }
     }
 

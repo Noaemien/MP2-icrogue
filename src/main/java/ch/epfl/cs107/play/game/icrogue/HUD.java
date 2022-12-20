@@ -43,6 +43,8 @@ public class HUD extends ImageGraphics implements Updatable {
 
     @Override
     public void draw(Canvas canvas) {
+        super.draw(canvas);
+        //Different heart display cases depending on hp
         switch (ICRoguePlayer.getHp()) {
             case 6 -> {
                 for (int i = 0; i < 3; ++i) {
@@ -77,14 +79,15 @@ public class HUD extends ImageGraphics implements Updatable {
             }
 
         }
+        /*
+        //Display win screen on win
         if(ICRogue.hasWon()) {
             winDisplay.draw(canvas);
-        }
-
-
+        }else //Display lose screen on lose
         if(ICRogue.hasLost()) {
             loseDisplay.draw(canvas);
-        }
 
+        }
+        */
     }
 }

@@ -328,4 +328,6 @@ abstract public class Level {
         return map[bossRoomCoordinates.x][bossRoomCoordinates.y].isCompleted();
     }
 
+
+
 }
