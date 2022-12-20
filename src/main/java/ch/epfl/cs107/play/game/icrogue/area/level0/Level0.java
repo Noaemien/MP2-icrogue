@@ -101,7 +101,6 @@ public class Level0 extends Level {
                 if (neighbors[i] != null) {
                     setRoomConnector(coords, "icrogue/level0" + neighbors[i].x + "" + neighbors[i].y, orientation[i]);
                     if (neighbors[i].equals(getBossRoomCoordinates())) {
-                        System.out.println("CREATING BOSS ROOM CONNECTOR");
                         lockRoomConnector(coords, orientation[i], BOSS_KEY_ID);
                     }
                 }

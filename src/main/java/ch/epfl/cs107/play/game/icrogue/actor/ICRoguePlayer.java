@@ -62,12 +62,17 @@ public class ICRoguePlayer extends ICRogueActor implements Interactor, Audio {
 
     private final float FIREBALL_COOLDOWN = .65f;
 
+    private final float IMMUNITY_COOLDOWN = 0.01f;
+    private float immunityTimer;
+
+    private boolean isImmune = false;
+
     private float fireBallTimer;
 
 
 
     /// Animation duration in frame number
-    private final static int MOVE_DURATION = 4;
+    private final static int MOVE_DURATION = 6;
 
     private boolean hasStaff = false;
 
@@ -245,6 +250,12 @@ public class ICRoguePlayer extends ICRogueActor implements Interactor, Audio {
             fireBallIfXDown(getOrientation(), keyboard.get(Keyboard.X));
 
         }
+
+        if (immunityTimer < IMMUNITY_COOLDOWN) immunityTimer += deltaTime;
+            else {
+                isImmune = false;
+        }
+
         super.update(deltaTime);
 
         if (this.projectiles != null) {
@@ -447,9 +458,13 @@ public class ICRoguePlayer extends ICRogueActor implements Interactor, Audio {
     }
 
     public void inflictDamage(int damage){
-        hp -= damage;
-        aouch.shouldBeStarted();
-        aouch.bip(AreaGame.getWindow());
+        if (!isImmune) {
+            hp -= damage;
+            aouch.shouldBeStarted();
+            aouch.bip(AreaGame.getWindow());
+            isImmune = true;
+            immunityTimer = 0;
+        }
     }
 
     public boolean isDead(){

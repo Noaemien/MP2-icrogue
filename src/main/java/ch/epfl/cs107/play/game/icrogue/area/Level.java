@@ -17,10 +17,6 @@ import java.util.List;
 
 abstract public class Level {
 
-
-    private int height;
-    private int width;
-
     protected ICRogueRoom[][] map; //= new ICRogueRoom[height][width];
     private int nbRooms;
     private int[] roomsDistribution;
@@ -33,34 +29,24 @@ abstract public class Level {
 
 /*    public Level (DiscreteCoordinates spawnCoordinates, int height, int width){
         this.spawnCoordinates = spawnCoordinates;
-        this.height = height;
-        this.width = width;
         this.map = new ICRogueRoom[height][width];
         bossRoomCoordinates = new DiscreteCoordinates(0, 0);
         generateFixedMap();
     }
 */
 
-    private int sum(int[] listToSum){
-        int out = 0;
-        for (int val : listToSum){
-            out += val;
-        }
-        return out;
-    }
+
 
     public Level(boolean randomMap , DiscreteCoordinates startPosition ,
           int[] roomsDistribution , int width , int height){
 
-        this.height = height;
-        this.width = width;
 
-
-        if(!randomMap){
+        if(!randomMap){ //Init fixed map
             this.map = new ICRogueRoom[height][width];
+            this.spawnCoordinates = startPosition;
             bossRoomCoordinates = new DiscreteCoordinates(0, 0);
             generateFixedMap();
-        } else {
+        } else { //Init procedurally generated map
             nbRooms = sum(roomsDistribution);
             this.map = new ICRogueRoom[nbRooms][nbRooms];
             this.roomsDistribution = roomsDistribution;
@@ -69,12 +55,28 @@ abstract public class Level {
 
     }
 
-    public void generateRandomMap(){
-        //PLACEMENT DES SALLES
-        MapState[][] roomPlacements = generateRandomRoomPlacement();
+    /**
+     *
+     * @param listToSum (int[]): list of integers to be summed
+     * @return (int) sum of elements in listToSum
+     */
+    private int sum(int[] listToSum){
+        int out = 0;
+        for (int val : listToSum){
+            out += val;
+        }
+        return out;
+    }
 
-        printMap(roomPlacements);
-        //GENERATION DES SALLES
+    /**
+     * Generates a map in a procedural manner
+     */
+    public void generateRandomMap(){
+        //Room Placements
+        MapState[][] roomPlacements = generateRandomRoomPlacement();
+        //printMap(roomPlacements);
+
+        //Room & Connector Generation
         generateRooms(roomPlacements, roomsDistribution);
         generateConnectors(roomPlacements);
         generateBossRoomConnectors(roomPlacements);
@@ -96,6 +98,14 @@ abstract public class Level {
         }
     }
 
+
+    /**
+     * Finds rooms around current room depending on State criteria
+     * @param position (DiscreteCoordinates): Room position
+     * @param map
+     * @param states
+     * @return (List(DiscreteCoordinates)): Array of available
+     */
     private List<DiscreteCoordinates> findNeighborSlotsOfType(DiscreteCoordinates position, MapState[][] map, MapState... states){
         List<DiscreteCoordinates> freeSlots = position.getNeighbours();
 
@@ -105,7 +115,7 @@ abstract public class Level {
         freeSlots.removeIf(n -> n.y < 0);
         freeSlots.removeIf(n -> n.y >= nbRooms);
 
-        //remove if slot is not empty
+        //remove if slot state is not chosen one
         if (states.length == 2) {
             freeSlots.removeIf(n -> map[n.x][n.y] != states[0] && map[n.x][n.y] != states[1]);
         } else if (states.length == 1){
