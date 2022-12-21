@@ -34,7 +34,8 @@ public class Stick extends Item{
             new RegionOfInterest(192, 0, 32, 32), new Vector(0, 0))};
 
     Animation animation = new Animation(2, spriTabo);
-    
+
+    public boolean showDialogue;
     Sprite dialogueBubble;
     TextGraphics message;
     TextGraphics message2;
@@ -56,6 +57,8 @@ public class Stick extends Item{
 
     @Override
     public void update(float deltaTime){
+        super.update(deltaTime);
+        showDialogue = false;
         animation.update(deltaTime);
     }
 
@@ -69,9 +72,11 @@ public class Stick extends Item{
 
         if(!isCollected()) {
             animation.draw(canvas);
-            dialogueBubble.draw(canvas);
-            message.draw(canvas);
-            message2.draw(canvas);
+            if (showDialogue) {
+                dialogueBubble.draw(canvas);
+                message.draw(canvas);
+                message2.draw(canvas);
+            }
         }
 
     }
