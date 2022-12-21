@@ -32,13 +32,13 @@ public class Turret extends Enemy {
 
     private SoundAcoustics throwArrow;
 
-    private final float ARROWCOOLDOWN = .6f;
+    private final float ARROWCOOLDOWN = 1.f;
 
     private float arrowTimer = 0f;
 
     private float moveTimer = 0.f;
 
-    private final float MOVECOOLDOWN = 1.f;
+    private final float MOVECOOLDOWN = 1.5f;
 
 
     private ArrayList<Projectile> projectiles = new ArrayList<Projectile>();
