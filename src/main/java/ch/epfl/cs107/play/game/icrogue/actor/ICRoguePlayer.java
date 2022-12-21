@@ -40,6 +40,8 @@ public class ICRoguePlayer extends ICRogueActor implements Interactor, Audio {
 
     private SoundAcoustics steps;
 
+    private SoundAcoustics hpUp;
+
     private SoundAcoustics ThrowFire;
 
     private SoundAcoustics aouch;
@@ -72,7 +74,7 @@ public class ICRoguePlayer extends ICRogueActor implements Interactor, Audio {
 
 
     /// Animation duration in frame number
-    private final static int MOVE_DURATION = 6;
+    private final static int MOVE_DURATION = 4;
 
     private boolean hasStaff = false;
 
@@ -138,6 +140,8 @@ public class ICRoguePlayer extends ICRogueActor implements Interactor, Audio {
             if (isCellInteraction){
                heart.collect();
                hp += 2;
+               hpUp.shouldBeStarted();
+               hpUp.bip(AreaGame.getWindow());
                if (hp > 6) hp = 6;
             }
         }
@@ -164,7 +168,7 @@ public class ICRoguePlayer extends ICRogueActor implements Interactor, Audio {
         steps = new SoundAcoustics(ResourcePath.getSound("pas"));
         aouch = new SoundAcoustics(ResourcePath.getSound("Degat"));
         ThrowFire = new SoundAcoustics(ResourcePath.getSound("Feu-lance"));
-
+        hpUp = new SoundAcoustics(ResourcePath.getSound("Coeur"));
         hp = 6;
         resetMotion();
     }
