@@ -100,8 +100,10 @@ public class ICRoguePlayer extends ICRogueActor implements Interactor, Audio {
         @Override
         public void interactWith(Stick stick, boolean isCellInteraction) {
 
+            stick.showDialogue = true;
 
-            if (getFieldOfViewCells().equals(stick.getCurrentCells()) && wIsDown()) {
+
+            if (wIsDown()) {
                 stick.collect();
                 hasStaff = true;
             }
