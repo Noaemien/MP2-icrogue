@@ -19,14 +19,15 @@ public class Level0 extends Level {
     final int PART_1_KEY_ID = 1;
     final int BOSS_KEY_ID = 996;
 
+    // type and number of room
     public enum RoomType {
-        TURRET_ROOM(3), // type and number of roon
+        TURRET_ROOM(3),
         STAFF_ROOM(1),
         BOSS_KEY(1),
         SPAWN(1),
         NORMAL(1);
 
-        int quantity;
+        private final int quantity;
 
         RoomType(int quantity){
             this.quantity = quantity;
@@ -43,12 +44,9 @@ public class Level0 extends Level {
     }
 
     private DiscreteCoordinates startRoom;
-    private DiscreteCoordinates spawnCoordinates;
 
     public Level0(boolean randomMap){
         super(randomMap, new DiscreteCoordinates(2, 0), RoomType.BOSS_KEY.getValues(), 4, 2);
-
-        this.spawnCoordinates = new DiscreteCoordinates(2, 0);
 
         if (!randomMap) startRoom = new DiscreteCoordinates(1, 0);
     }
@@ -57,18 +55,12 @@ public class Level0 extends Level {
         this(true);
     }
 
-    public String getStartTitle(){
-        return "icrogue/level0" + startRoom.x + "" + startRoom.y;
-    }
 
-    public String getRoomTitle(DiscreteCoordinates coordinates){
-        return "icrogue/level0" + coordinates.x + "" + coordinates.y;
-    }
-
-    public ICRogueRoom getCurrentArea(){
-        return map[1][0];
-    }
-
+    /**
+     * Generates a room depending on room type
+     * @param roomType (int) of room type. (Room orders: turret, staff, key, spawn, normal)
+     * @param roomCoords (DiscreteCoordinates): coordinates of room to generate
+     */
     protected void generateSingleRoom(int roomType, DiscreteCoordinates roomCoords){
         switch (roomType) {
             case 0 -> setRoom(roomCoords, new Level0TurretRoom(roomCoords));
@@ -83,21 +75,30 @@ public class Level0 extends Level {
     }
 
 
-
+    /**
+     * Generates room connectors
+     * @param coords (DiscreteCoordinates): room coordinates
+     * @param destCoords (DiscreteCoordinates[]): destination of room connectors
+     * @param isBossRoom (boolean)
+     */
     @Override
     protected void generateRoomConnectors(DiscreteCoordinates coords, DiscreteCoordinates[] destCoords, boolean isBossRoom) {
+        //Different available orientations
         Level0Room.Level0Connectors[] orientation = new Level0Room.Level0Connectors[] {Level0Room.Level0Connectors.W,
                 Level0Room.Level0Connectors.N, Level0Room.Level0Connectors.E, Level0Room.Level0Connectors.S};
+
+
         DiscreteCoordinates[] neighbors = coords.getNeighbours().toArray(new DiscreteCoordinates[0]);
         ArrayList<DiscreteCoordinates> destCoords_a = new ArrayList<>(Arrays.stream(destCoords).toList());
-
+        //Sets missing connectors as null
         for (int i = 0; i < neighbors.length; ++i){
             if (!destCoords_a.contains(neighbors[i]))
                 neighbors[i] = null;
         }
 
         if (!isBossRoom){
-            for (int i = 0; i < neighbors.length; ++i) { //ORDER LEFT UP RIGHT DOWN but check for missing
+            //Locks room connectors
+            for (int i = 0; i < neighbors.length; ++i) {
                 if (neighbors[i] != null) {
                     setRoomConnector(coords, "icrogue/level0" + neighbors[i].x + "" + neighbors[i].y, orientation[i]);
                     if (neighbors[i].equals(getBossRoomCoordinates())) {
@@ -109,7 +110,7 @@ public class Level0 extends Level {
             for (int i = 0; i < neighbors.length; ++i) //ORDER LEFT UP RIGHT DOWN but check for missing
                 if (neighbors[i] != null ) {
                     setRoomConnector(coords, "icrogue/level0" + neighbors[i].x + "" + neighbors[i].y, orientation[i]);
-                    lockRoomConnector(coords, orientation[i],  BOSS_KEY_ID);
+
                 }
         }
     }
@@ -188,5 +189,22 @@ public class Level0 extends Level {
         DiscreteCoordinates room11 = new DiscreteCoordinates(1, 1);
         setRoom (room11, new Level0Room(room11));
         setRoomConnector(room11, "icrogue/level010", Level0Room.Level0Connectors.N);
+    }
+
+    //-------
+    //GETTERS
+    //-------
+
+
+    public String getStartTitle(){
+        return "icrogue/level0" + startRoom.x + "" + startRoom.y;
+    }
+
+    public String getRoomTitle(DiscreteCoordinates coordinates){
+        return "icrogue/level0" + coordinates.x + "" + coordinates.y;
+    }
+
+    public ICRogueRoom getCurrentArea(){
+        return map[1][0];
     }
 }

@@ -1,23 +1,16 @@
 package ch.epfl.cs107.play.game.icrogue.area;
 
 import ch.epfl.cs107.play.game.areagame.AreaGame;
-import ch.epfl.cs107.play.game.icrogue.ICRogue;
 import ch.epfl.cs107.play.game.icrogue.RandomHelper;
 import ch.epfl.cs107.play.game.icrogue.actor.Connector;
-import ch.epfl.cs107.play.game.icrogue.actor.ICRogueActor;
-import ch.epfl.cs107.play.game.icrogue.area.level0.rooms.Level0KeyRoom;
-import ch.epfl.cs107.play.game.icrogue.area.level0.rooms.Level0Room;
-import ch.epfl.cs107.play.game.icrogue.area.level0.rooms.Level0StaffRoom;
-import ch.epfl.cs107.play.game.icrogue.area.level0.rooms.Level0TurretRoom;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
-import ch.epfl.cs107.play.math.Vector;
 
 import java.util.ArrayList;
 import java.util.List;
 
 abstract public class Level {
 
-    protected ICRogueRoom[][] map; //= new ICRogueRoom[height][width];
+    protected ICRogueRoom[][] map;
     private int nbRooms;
     private int[] roomsDistribution;
 
@@ -25,24 +18,13 @@ abstract public class Level {
 
     private DiscreteCoordinates bossRoomCoordinates;
 
-    private String startRoomName;
-
-/*    public Level (DiscreteCoordinates spawnCoordinates, int height, int width){
-        this.spawnCoordinates = spawnCoordinates;
-        this.map = new ICRogueRoom[height][width];
-        bossRoomCoordinates = new DiscreteCoordinates(0, 0);
-        generateFixedMap();
-    }
-*/
-
-
 
     public Level(boolean randomMap , DiscreteCoordinates startPosition ,
-          int[] roomsDistribution , int width , int height){
+                 int[] roomsDistribution , int width , int height){
 
 
         if(!randomMap){ //Init fixed map
-            this.map = new ICRogueRoom[height][width];
+            this.map = new ICRogueRoom[width][height];
             this.spawnCoordinates = startPosition;
             bossRoomCoordinates = new DiscreteCoordinates(0, 0);
             generateFixedMap();
@@ -79,8 +61,6 @@ abstract public class Level {
         //Room & Connector Generation
         generateRooms(roomPlacements, roomsDistribution);
         generateConnectors(roomPlacements);
-        generateBossRoomConnectors(roomPlacements);
-
 
     }
 
@@ -102,11 +82,14 @@ abstract public class Level {
     /**
      * Finds rooms around current room depending on State criteria
      * @param position (DiscreteCoordinates): Room position
-     * @param map
-     * @param states
-     * @return (List(DiscreteCoordinates)): Array of available
+     * @param map (MapState[][]): current map state
+     * @param states (MapState...): states to find, filter
+     * @return (List(DiscreteCoordinates)): Array of available rooms responding to MapState criteria
      */
     private List<DiscreteCoordinates> findNeighborSlotsOfType(DiscreteCoordinates position, MapState[][] map, MapState... states){
+        //Methode only used to filter up to two states
+        assert states.length < 3;
+
         List<DiscreteCoordinates> freeSlots = position.getNeighbours();
 
         //remove if out of bounds
@@ -124,11 +107,15 @@ abstract public class Level {
         return freeSlots;
     }
 
+    /**
+     * Procedurally generates a random map
+     * @return (MapState[][]): room locations in map
+     */
     protected MapState[][] generateRandomRoomPlacement(){
         MapState[][] mapPlacements = new MapState[nbRooms][nbRooms];
         List<DiscreteCoordinates> placedRooms = new ArrayList<>();
 
-        //Initialise toutes les cases a NULL
+        //Initialises all slots to NULL
         for (int i = 0; i < nbRooms; ++i) {
             for (int j = 0; j < nbRooms; ++j){
                 mapPlacements[i][j] = MapState.NULL;
@@ -147,6 +134,8 @@ abstract public class Level {
             roomsToPlace -= placeRoom(roomsToPlace, placedRooms, mapPlacements, MapState.PLACED);
 
         }
+
+        //Place bossRoom
         int bossRoomPlaced = 0;
         while (bossRoomPlaced == 0)
             bossRoomPlaced = placeRoom(1, placedRooms, mapPlacements, MapState.BOSS_ROOM);
@@ -155,24 +144,33 @@ abstract public class Level {
 
     /** placeRoom
      * Places rooms of defined type in map procedurally
-     * @param roomsToPlace int Number of rooms to place,
-     * @param placedRooms DiscreteCoordinates list of already placed room coordinates,
-     * @param mapPlacements MapState[][] list of already placed rooms,
-     * @param roomType MapState of room to place,
-     * @return int: number of placed rooms
+     * @param roomsToPlace (int): Number of rooms to place,
+     * @param placedRooms (DiscreteCoordinates): list of already placed room coordinates,
+     * @param mapPlacements (MapState[][]): list of already placed rooms,
+     * @param roomType (MapState): of room to place,
+     * @return (int): number of placed rooms
      */
     private int placeRoom(int roomsToPlace, List<DiscreteCoordinates> placedRooms, MapState[][] mapPlacements, MapState roomType ){
         int outputPlacedRooms = 0;
-        //Select Random placed room
-        int rndPlacedRoomIdx = RandomHelper.roomGenerator.nextInt(0, placedRooms.size());
+        /*
+        Select Random placed room:
+            Replace line 174 with:
+                int rndPlacedRoomIdx = RandomHelper.roomGenerator.nextInt(0, placedRooms.size());
+            to have easy control on seed.
+
+            else use:
+                int rndPlacedRoomIdx = (int) (Math.random() * placedRooms.size());
+        */
+        int rndPlacedRoomIdx = (int) (Math.random() * placedRooms.size());  //RandomHelper.roomGenerator.nextInt(0, placedRooms.size())
         DiscreteCoordinates placedRoomCoords = placedRooms.get(rndPlacedRoomIdx);
 
         //Get all free slots around placed room
         List<DiscreteCoordinates> freeSlots = findNeighborSlotsOfType(placedRoomCoords, mapPlacements, MapState.NULL);
 
+        //If no free slots skip adding rooms
+        if (!freeSlots.isEmpty()) {
 
-        if (!freeSlots.isEmpty()) { //If no free slots skip adding rooms
-
+            //Choses a random amount of rooms in available free slots
             if (freeSlots.size() > 1 && roomsToPlace > 1) {
                 roomsToPlace = RandomHelper.roomGenerator.nextInt(1, Math.min(freeSlots.size(), roomsToPlace));
             } else
@@ -223,15 +221,16 @@ abstract public class Level {
         System.out.println();
     }
 
-    public DiscreteCoordinates getBossRoomCoordinates() {
-        return bossRoomCoordinates;
-    }
-
+    /**
+     * Generates rooms according to map schematic
+     * Places room types randomly
+     * @param map (MapState[][]): current map state
+     * @param roomsDistribution (int[]): distribution of room types
+     */
     private void generateRooms(MapState[][] map, int[] roomsDistribution){
 
         //Get valid room locations
         List<DiscreteCoordinates> rooms = new ArrayList<>();
-
         for (int i = 0; i < nbRooms; ++i) {
             for (int j = 0; j < nbRooms; ++j){
                 if (map[i][j] == MapState.EXPLORED || map[i][j] == MapState.PLACED)
@@ -239,8 +238,8 @@ abstract public class Level {
             }
         }
 
-
-        for (int i = 0; i < roomsDistribution.length; ++i){ // Distribution TurretRoom, StaffRoom, Boss_key, Spawn, Normal
+        //Places each room type one after the other
+        for (int i = 0; i < roomsDistribution.length; ++i){
             int roomsToPlace = roomsDistribution[i];
             while (roomsToPlace > 0){
                 //Pick random room
@@ -249,6 +248,7 @@ abstract public class Level {
 
                 //generate the room
                 generateSingleRoom(i, roomCoords);
+
                 //set as created
                 map[roomCoords.x][roomCoords.y] = MapState.CREATED;
                 rooms.remove(roomCoords);
@@ -256,6 +256,7 @@ abstract public class Level {
             }
         }
 
+        //Generates the boss room
         for (int i = 0; i < nbRooms; ++i) {
             for (int j = 0; j < nbRooms; ++j){
                 if (map[i][j] == MapState.BOSS_ROOM ) {
@@ -267,11 +268,14 @@ abstract public class Level {
 
     }
 
+    /**
+     * Generates connectors between rooms
+     * @param map (MapState[][]): current map state
+     */
     private void generateConnectors(MapState[][] map){
 
         //Get valid room locations
         List<DiscreteCoordinates> rooms = new ArrayList<>();
-
         for (int i = 0; i < nbRooms; ++i) {
             for (int j = 0; j < nbRooms; ++j){
                 if (map[i][j] == MapState.CREATED)
@@ -280,24 +284,30 @@ abstract public class Level {
         }
 
 
-        for (DiscreteCoordinates coords: rooms){ // Distribution TurretRoom, StaffRoom, Boss_key, Spawn, Normal
+        for (DiscreteCoordinates coords: rooms){
 
             List<DiscreteCoordinates> destCoords = findNeighborSlotsOfType(coords, map, MapState.CREATED, MapState.BOSS_ROOM);
-            //generate the connectors
+            //Generate the connectors
             generateRoomConnectors(coords, destCoords.toArray(new DiscreteCoordinates[0]));
-
         }
+
+        //Generate boss room connectors
+        generateBossRoomConnectors(map);
     }
 
+    /**
+     * Generates the boss room connectors
+     * @param map (MapState[][]): current map state
+     */
     private void generateBossRoomConnectors(MapState[][] map){
         List<DiscreteCoordinates> destCoords = findNeighborSlotsOfType(bossRoomCoordinates, map, MapState.CREATED);
         generateRoomConnectors(bossRoomCoordinates, destCoords.toArray(new DiscreteCoordinates[0]), true);
     }
 
-    abstract protected void generateSingleRoom(int roomType, DiscreteCoordinates roomCoords);
-    abstract protected void generateRoomConnectors(DiscreteCoordinates coords, DiscreteCoordinates[] destCoords, boolean isBossRoom);
-    abstract protected void generateRoomConnectors(DiscreteCoordinates coords, DiscreteCoordinates[] destCoords);
-
+    /**
+     * Enables adding the areas to the game without using an intrusive getter
+     * @param game (AreaGame): game instance
+     */
     public void addArea (AreaGame game){
         for (ICRogueRoom[] height : map){
             for (ICRogueRoom area : height) {
@@ -307,7 +317,20 @@ abstract public class Level {
         }
     }
 
+    //----------------
+    //ABSTRACT METHODS
+    //----------------
+
+    abstract protected void generateSingleRoom(int roomType, DiscreteCoordinates roomCoords);
+    abstract protected void generateRoomConnectors(DiscreteCoordinates coords, DiscreteCoordinates[] destCoords, boolean isBossRoom);
+    abstract protected void generateRoomConnectors(DiscreteCoordinates coords, DiscreteCoordinates[] destCoords);
     protected abstract void generateFixedMap();
+
+
+
+    //-------
+    //SETTERS
+    //-------
 
     protected void setRoom(DiscreteCoordinates coords, ICRogueRoom room) {
         map[coords.x][coords.y] = room;
@@ -330,8 +353,17 @@ abstract public class Level {
         map[coords.x][coords.y].connectors.get(connector.getIndex()).setKeyId(keyId);
     }
 
+
     protected void setTitle(ICRogueRoom room, DiscreteCoordinates roomCoords){
         room.behaviorName = "icrogue/level0" + roomCoords.x + "" + roomCoords.y;
+    }
+
+    // -------
+    // GETTERS
+    // -------
+
+    protected DiscreteCoordinates getBossRoomCoordinates() {
+        return bossRoomCoordinates;
     }
 
     public boolean isCompleted(){

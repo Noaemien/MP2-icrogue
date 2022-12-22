@@ -8,6 +8,9 @@ import ch.epfl.cs107.play.math.RegionOfInterest;
 import ch.epfl.cs107.play.math.Vector;
 import ch.epfl.cs107.play.window.Canvas;
 
+/**
+ * Class Hud enables heart overlay on screen.
+ */
 public class HUD extends ImageGraphics implements Updatable {
 
     private Foreground[][] heartDisplay = new Foreground[3][3];

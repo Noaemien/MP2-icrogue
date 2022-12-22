@@ -12,16 +12,12 @@ public class Level0KeyRoom extends Level0ItemRoom{
     public Level0KeyRoom(DiscreteCoordinates tileCoordinates, int keyId) {
         super(tileCoordinates);
         key = new Key(this, Orientation.UP, new DiscreteCoordinates(5, 5), keyId);
-        super.addItem(key);
+        addItem(key);
     }
 
     @Override
     protected void createArea() {
         super.createArea();
         registerActor(key);
-    }
-
-    @Override
-    public void addItem(Item item) {
     }
 }

@@ -56,18 +56,6 @@ public class Fire extends Projectile {
             new RegionOfInterest(160, 0, 32, 32), new
             Vector(0, 0)), new Sprite("zelda/explosion", 1f, 1f, this,
             new RegionOfInterest(196, 0, 32, 32), new Vector(0, 0))};
-
-    /*private void initTab(Sprite[][] spriTab){
-        for(int i = 0; i < 7; ++i){
-                spriTab[0][i] = new Sprite("zelda/fire", 1f, 1f, this,
-                        new RegionOfInterest(16 * i, 0, 16, 16), new
-                        Vector(0, 0));
-                spriTab[0][i] = new Sprite("zelda/fire", 1f, 1f, this,
-                        new RegionOfInterest(16 * i, 16, 16, -16), new
-                        Vector(0, 0),);)
-
-        }
-    }*/
     Animation animation = new Animation(2, spriTabo);
     Animation animboom = new Animation(1, boomSprite, false);
 

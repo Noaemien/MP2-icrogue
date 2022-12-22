@@ -15,9 +15,6 @@ public class Level0StaffRoom extends Level0ItemRoom{
         super.addItem(stick);
     }
 
-    @Override
-    public void addItem(Item item) {
-    }
 
     public void leaving(Stick stick){
         unregisterActor(stick);

@@ -43,6 +43,11 @@ public abstract class ICRogueRoom extends Area implements Logic {
 
     }
 
+    /**
+     * Initialises the connectors of the room
+     * @param connectorsCoordinates (List(DiscreteCoordinates)) of all connector coordinates
+     * @param orientations (List(Orientation)) of all connector orientations
+     */
     private void initConnectors(List<DiscreteCoordinates > connectorsCoordinates , List<Orientation> orientations){
         int n = connectorsCoordinates.size();
         for (int i = 0; i < n; ++i){
@@ -57,20 +62,19 @@ public abstract class ICRogueRoom extends Area implements Logic {
      */
     protected abstract void createArea();
 
+    /**
+     * Registers connectors as actors
+     */
     protected void registerConnectors(){
         for (Connector connector: connectors){
             registerActor(connector);
         }
     }
-    /// EnigmeArea extends Area
 
     @Override
     public final float getCameraScaleFactor() {
         return 11.f;//ICRogue.CAMERA_SCALE_FACTOR;
     }
-
-
-    /// Demo2Area implements Playable
 
     @Override
     public boolean begin(Window window, FileSystem fileSystem) {
@@ -84,6 +88,10 @@ public abstract class ICRogueRoom extends Area implements Logic {
         return false;
     }
 
+    /**
+     * Sets all connectors that aren't LOCKED or INVISIBLE to a defined state
+     * @param state (Connector.State): state to set connectors to
+     */
     private void setAllConnectorStates(Connector.State state){
         for(Connector connector : connectors){
             if(connector.getState() !=Connector.State.LOCKED && connector.getState() != Connector.State.INVISIBLE) {
@@ -93,7 +101,10 @@ public abstract class ICRogueRoom extends Area implements Logic {
     }
 
 
-
+    /**
+     * For all connectors that are not LOCKED or INVISIBLE
+     *  Sets to open if is closed or sets to closed if is open
+     */
     private void switchUnlockedConnectorStates(){
         Connector.State state;
         for(Connector connector : connectors){
@@ -108,13 +119,15 @@ public abstract class ICRogueRoom extends Area implements Logic {
         }
     }
 
-    public void setConnectors(int i, Connector connector){  // TODO TEJ SI CA SERT A RIEN
-        connectors.set(i, connector);
-    }
-
     @Override
     public void update(float deltaTime) {
         super.update(deltaTime);
+
+        //Un-comment section below for debugging purposes.
+        //Enables opening doors when pressing o
+        //Closing unlocked doors with t
+        //Locking west door with l
+
         Keyboard keyboard= this.getKeyboard();
 
         if (keyboard.get(Keyboard.O).isPressed()){
@@ -125,6 +138,8 @@ public abstract class ICRogueRoom extends Area implements Logic {
             connectors.get(0).setState(Connector.State.LOCKED);
         }
 
+
+        //if level is completed, do once
         if (isCompleted() && !reapeted){ //TODO: SI ON VEUT FAIRE QUE LES PORTENT SPAWN MEME PAS QUAND TU ENTRE DANS LA SALLE SI C'EST PAS UNE ItEM ROOM
             setAllConnectorStates(Connector.State.OPEN);
             door.shouldBeStarted();
@@ -133,6 +148,10 @@ public abstract class ICRogueRoom extends Area implements Logic {
         }
     }
 
+
+    //-------
+    //GETTERS
+    //-------
     public void visiting(){
         hasBeenVisited = true;
     }

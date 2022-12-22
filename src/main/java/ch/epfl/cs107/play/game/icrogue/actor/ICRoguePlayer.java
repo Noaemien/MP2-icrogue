@@ -32,60 +32,55 @@ import java.util.List;
 
 
 public class ICRoguePlayer extends ICRogueActor implements Interactor, Audio {
-    private final float STEP_COOLDOWN = 0.5f;
 
-    private float stepTimer;
-
+    //Player characteristics
+    private String playerName = "player";
     private static int hp;
+    private final static int MOVE_DURATION = 4; // Animation duration in frame number
+    private boolean hasStaff = false;
+    private ArrayList<Projectile> projectiles = new ArrayList<Projectile>();
+    private ArrayList<Integer> collectedKeys = new ArrayList<Integer>();
 
+
+    //Sound variables
+    private SoundAcoustics door;
+    boolean connectorSoundPlayed;
     private SoundAcoustics steps;
-
+    private final float STEP_COOLDOWN = 0.5f; //Cooldown for step sound
+    private float stepTimer;
     private SoundAcoustics hpUp;
-
     private SoundAcoustics ThrowFire;
-
     private SoundAcoustics aouch;
-
     private TextGraphics message;
 
-    private Sprite shadow;
 
+    //HUD
     private HUD hud;
 
+
+    //Sprites
+    private Sprite shadow;
     private Sprite mew;
-
     private Sprite sprite;
-
     private Sprite[][] spriTab = new Sprite[4][4];
-
     private Sprite[][] staffTab = new Sprite[4][4];
 
-    private String playerName = "player";
 
+    //Fireball variables
     private final float FIREBALL_COOLDOWN = .65f;
-
-    private final float IMMUNITY_COOLDOWN = 0.01f;
-    private float immunityTimer;
-
-    private boolean isImmune = false;
-
     private float fireBallTimer;
 
 
+    //Imunity variables
+    private final float IMMUNITY_COOLDOWN = 0.01f;
+    private float immunityTimer;
+    private boolean isImmune = false;
 
-    /// Animation duration in frame number
-    private final static int MOVE_DURATION = 4;
 
-    private boolean hasStaff = false;
-
-    private ArrayList<Projectile> projectiles = new ArrayList<Projectile>();
-
-    private ArrayList<Integer> collectedKeys = new ArrayList<Integer>();
-
+    //Connector variables
     public boolean isInConnector = false;
     public String connectorDestRoom;
     public DiscreteCoordinates connectorDestCoords;
-
 
 
     private class ICRoguePlayerInteractionHandler implements ICRogueInteractionHandler {
@@ -99,9 +94,8 @@ public class ICRoguePlayer extends ICRogueActor implements Interactor, Audio {
 
         @Override
         public void interactWith(Stick stick, boolean isCellInteraction) {
-
+            //affiche le dialogue quand vue interaction avec stick
             stick.showDialogue = true;
-
 
             if (wIsDown()) {
                 stick.collect();
@@ -156,9 +150,13 @@ public class ICRoguePlayer extends ICRogueActor implements Interactor, Audio {
         super(owner, orientation, coordinates);
         iniSpriteTab(spriTab);
         iniStaffTab(staffTab);
+
+        //Init player name
         message = new TextGraphics("PLAYER_1", 0.4f, Color.MAGENTA);
         message.setParent(this);
         message.setAnchor(new Vector(-0.1f, 1.2f));
+
+        //Init sprites
         shadow = new Sprite("shadow", 0.58f, 0.58f, this);
         shadow.setAnchor(new Vector(0.23f, -0.15f));
         mew = new Sprite("mew.fixed", 0.5f, 0.5f, this,
@@ -166,7 +164,11 @@ public class ICRoguePlayer extends ICRogueActor implements Interactor, Audio {
 
         sprite = new Sprite("zelda/" + playerName, .75f, 1.5f, this,
                 new RegionOfInterest(0, 0, 16, 32), new Vector(0.15f, -.15f));
+
+        //Init HUD
         hud = new HUD(null,640, 640, new RegionOfInterest(0, 0,640, 640),new Vector(0,0));
+
+        //Init sounds
         steps = new SoundAcoustics(ResourcePath.getSound("pas"));
         aouch = new SoundAcoustics(ResourcePath.getSound("Degat"));
         ThrowFire = new SoundAcoustics(ResourcePath.getSound("Feu-lance"));
@@ -237,11 +239,13 @@ public class ICRoguePlayer extends ICRogueActor implements Interactor, Audio {
         if (hp < 0) hp = 0;
         Keyboard keyboard = getOwnerArea().getKeyboard();
 
+        //Movement
         moveIfPressed(Orientation.LEFT, keyboard.get(Keyboard.LEFT));
         moveIfPressed(Orientation.UP, keyboard.get(Keyboard.UP));
         moveIfPressed(Orientation.RIGHT, keyboard.get(Keyboard.RIGHT));
         moveIfPressed(Orientation.DOWN, keyboard.get(Keyboard.DOWN));
 
+        //Step sound
         if( stepTimer < STEP_COOLDOWN) {
             stepTimer += deltaTime;
         } else if(isDisplacementOccurs()) {
@@ -250,13 +254,14 @@ public class ICRoguePlayer extends ICRogueActor implements Interactor, Audio {
             stepTimer = 0.f;
         }
 
+        //Fireball cooldown mecanics
         if (fireBallTimer < FIREBALL_COOLDOWN) fireBallTimer += deltaTime;
             else if (throwingFireball(keyboard.get(Keyboard.X))) {
             fireBallTimer = 0.f;
             fireBallIfXDown(getOrientation(), keyboard.get(Keyboard.X));
-
         }
 
+        //Imunity after taking damage
         if (immunityTimer < IMMUNITY_COOLDOWN) immunityTimer += deltaTime;
             else {
                 isImmune = false;
@@ -264,6 +269,7 @@ public class ICRoguePlayer extends ICRogueActor implements Interactor, Audio {
 
         super.update(deltaTime);
 
+        //Remove consumed projectils
         if (this.projectiles != null) {
             for (int i = 0; i < projectiles.size(); ++i) {
                 if (projectiles.get(i).isConsumed()) {
@@ -273,11 +279,17 @@ public class ICRoguePlayer extends ICRogueActor implements Interactor, Audio {
         }
         if (hasStaff) switchPlayerName();
 
-        if (isDead()){  //NOT NECESSARY WITH HUD
+        if (isDead()){
             leaveArea();
         }
 
     }
+
+    /**
+     * Shoot fireball if button is pressed
+     * @param orientation (Orientation): throw direction
+     * @param b (Button): button to be pressed
+     */
 
     public void fireBallIfXDown(Orientation orientation, ch.epfl.cs107.play.window.Button b) {
         if (b.isDown() && hasStaff && !isDisplacementOccurs()) {
@@ -373,7 +385,7 @@ public class ICRoguePlayer extends ICRogueActor implements Interactor, Audio {
     /** tells if the player is moving
     @param b Button the button which has to be pressed
      */
-    public boolean moving(   ch.epfl.cs107.play.window.Button b){
+    public boolean moving( ch.epfl.cs107.play.window.Button b){
         return (b.isDown());
     }
 
@@ -463,6 +475,10 @@ public class ICRoguePlayer extends ICRogueActor implements Interactor, Audio {
         ((ICRogueInteractionHandler) v).interactWith(this , isCellInteraction);
     }
 
+    /**
+     * Inflict damage to player
+     * @param damage (int): damage quantity
+     */
     public void inflictDamage(int damage){
         if (!isImmune) {
             hp -= damage;
@@ -476,6 +492,11 @@ public class ICRoguePlayer extends ICRogueActor implements Interactor, Audio {
     public boolean isDead(){
         return hp <=0;
     }
+
+
+    //-------------
+    //SOUND METHODS
+    //-------------
 
     @Override
     public Sound getSound(String name) {

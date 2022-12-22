@@ -46,7 +46,7 @@ public class ICRogue extends AreaGame{
     private void initLevel(){
         DiscreteCoordinates coords = new DiscreteCoordinates(2, 2);
         //Init new level
-        level = new Level0();
+        level = new Level0(); //can take param false to used fixed map
         level.addArea(this);
 
         //Set current area

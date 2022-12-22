@@ -1,7 +1,23 @@
 # MP2-icrogue
 
-## Idée fondamentale:
+## Description du jeu
+Laissez vous immerger pleinement dans le jeu en activant le son de votre ordinateur.
+Deplacez vous et ecrasez les monstres afin de progresser dans le donjon.
 
-Nous souhaitions on jeu immersif, c'est dans cette optique
-que nous avons 
-//TODO FINIR
+
+Controles
+Flèches directionelles : déplacement.
+W : interaction de contact(récuperer un baton ou ouvir une porte avec une cléf
+X : lancement d'une boule de feu. (vous pouvez rester appuyé sur x pour lancer des boules de feu a la chaine (avec un cooldown)).
+
+## Comment tuer les ennemis :
+Pour parvenir a vaincre les ennemis vous pouvez soit, leur marcher dessus soit leur envoyer une boule de feu bien placée.
+
+
+## Bonus :
+Si vous avez le baton magique en main, il est possible qu'en mourrant les monstres laissent tomber un coeur qui restaurera un coeur sur trois du joueur.
+
+
+
+## Fin du jeu :
+Mourrez ou vainquez tous les ennemis et gagnez le jeu.

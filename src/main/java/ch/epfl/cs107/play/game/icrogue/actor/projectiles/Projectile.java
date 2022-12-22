@@ -4,12 +4,9 @@ import ch.epfl.cs107.play.game.areagame.Area;
 import ch.epfl.cs107.play.game.areagame.actor.Interactor;
 import ch.epfl.cs107.play.game.areagame.actor.Orientation;
 import ch.epfl.cs107.play.game.areagame.actor.Sprite;
-import ch.epfl.cs107.play.game.areagame.handler.AreaInteractionVisitor;
 import ch.epfl.cs107.play.game.icrogue.actor.ICRogueActor;
-import ch.epfl.cs107.play.game.icrogue.handler.ICRogueInteractionHandler;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
-import ch.epfl.cs107.play.window.Canvas;
-import ch.epfl.cs107.play.window.Keyboard;
+
 
 import java.util.Collections;
 import java.util.List;
@@ -54,7 +51,6 @@ abstract public class Projectile extends ICRogueActor implements Consumable, Int
     public void update(float deltaTime) {
         super.update(deltaTime);
         move(this.framesForMove);
-        //if(isConsumed()) leaveArea();
     }
 
     /**
