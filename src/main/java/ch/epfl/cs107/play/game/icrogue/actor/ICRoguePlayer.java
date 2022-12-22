@@ -108,6 +108,12 @@ public class ICRoguePlayer extends ICRogueActor implements Interactor, Audio {
             if (!isCellInteraction) {
                 if (collectedKeys.contains(connector.keyId) && wIsDown()) {
                     connector.setState(Connector.State.OPEN);
+                    //Sound
+                    if(!connectorSoundPlayed) {
+                        door.shouldBeStarted();
+                        door.bip(AreaGame.getWindow());
+                        connectorSoundPlayed = true;
+                    }
                 }
             } else if (!isDisplacementOccurs()) {
                 isInConnector = true;
@@ -173,6 +179,8 @@ public class ICRoguePlayer extends ICRogueActor implements Interactor, Audio {
         aouch = new SoundAcoustics(ResourcePath.getSound("Degat"));
         ThrowFire = new SoundAcoustics(ResourcePath.getSound("Feu-lance"));
         hpUp = new SoundAcoustics(ResourcePath.getSound("Coeur"));
+        door = new SoundAcoustics(ResourcePath.getSound("porte"));
+
         hp = 6;
         resetMotion();
     }
